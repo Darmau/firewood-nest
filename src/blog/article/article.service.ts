@@ -1,4 +1,4 @@
-import { extract as feedExtract } from '@extractus/feed-extractor';
+import {extract} from '@extractus/feed-extractor';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
@@ -79,7 +79,7 @@ export class ArticleService {
     }
 
     // 从feed中提取文章信息，并找到content和summary
-    const feed = await feedExtract(rss);
+    const feed = await extract(rss);
 
     for (const item of feed.entries) {
       try {
