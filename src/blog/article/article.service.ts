@@ -30,14 +30,14 @@ export class ArticleService {
   }
 
   // 新增文章
-  async addArticle(url: string, website_id: mongoose.Types.ObjectId, website: string, title: string, description: string, publish_date: Date): Promise<Article | String> {
+  async addArticle(url: string, website_id: mongoose.Types.ObjectId, website: string, title: string, description: string, publish_date: Date, token): Promise<Article | String> {
     // 查询是否已存在该 article
     const existArticle = await this.articleModel.findOne({ url: url }).exec();
     if (existArticle) {
       return 'Article already exists';
     }
 
-    const article = await getArticleInfo(url, website);
+    const article = await getArticleInfo(url, website, token);
 
     const newArticle = await new this.articleModel({
       website_id: website_id,
@@ -48,6 +48,8 @@ export class ArticleService {
       publish_date: publish_date,
       cover: article.covers,
       content: article.content,
+      abstract: article.abstract,
+      tags: article.tags,
     });
 
     await newArticle.save();
@@ -61,7 +63,7 @@ export class ArticleService {
   }
 
   // 根据网站rss，获取网站最新文章，并传入addArticle方法
-  async updateArticlesByWebsite(url: string): Promise<any> {
+  async updateArticlesByWebsite(url: string, token: string): Promise<any> {
 
     const website = await this.websiteModel.findOne({ url: url }).exec();
 
@@ -81,7 +83,7 @@ export class ArticleService {
 
     for (const item of feed.entries) {
       try {
-        await this.addArticle(item.link, websiteId, websiteUrl, item.title, item.description, item.published);
+        await this.addArticle(item.link, websiteId, websiteUrl, item.title, item.description, item.published, token);
       } catch {
         this.logger.error(`Add article ${item.title} of url ${item.link} failed`)
         continue;

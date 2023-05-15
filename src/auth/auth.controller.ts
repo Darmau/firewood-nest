@@ -12,9 +12,9 @@ export class AuthController {
     @InjectModel('User') private userModel: Model<User>,
   ) { }
 
-  // /auth/signin POST
+  // /auth/login POST
   @HttpCode(HttpStatus.OK)
-  @Post('signin')
+  @Post('login')
   signIn(@Body() signDto: SignDto) {
     return this.authService.signIn(signDto.username, signDto.password);
   }

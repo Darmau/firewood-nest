@@ -22,4 +22,6 @@ export class AddArticleDto {
   cover: string;
   
   content: string;
+
+  token: string;
 }

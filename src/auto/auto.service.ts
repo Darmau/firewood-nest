@@ -4,6 +4,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { Model } from 'mongoose';
 import { ArticleService } from 'src/blog/article/article.service';
 import { WebsiteService } from 'src/blog/website/website.service';
+import getBaiduToken from 'src/common/get-baidu-token';
 import { Website } from 'src/schemas/website.schema';
 
 @Injectable()
@@ -16,16 +17,17 @@ export class AutoService {
   private readonly logger = new Logger(AutoService.name);
 
   // 获取所有website，分别将url传入updateArticlesByWebsite方法, 每2小时执行一次
-  // @Cron('0 0 */2 * * *')
-  @Cron(CronExpression.EVERY_30_MINUTES)
+  @Cron('0 0 */2 * * *')
+  // @Cron(CronExpression.EVERY_5_MINUTES)
   async excuteCron() {
+    const token = await getBaiduToken();
     try {
       const websites = await this.websiteModel.find();
       this.logger.log('Start update ' + websites.length + ' websites')
       for (const website of websites) {
         try {
           this.logger.log('Start update articles at:' + website.url);
-          await this.articleService.updateArticlesByWebsite(website.url);
+          await this.articleService.updateArticlesByWebsite(website.url, token);
           await this.websiteService.updatePageView(website.url);
         } catch (error) {
           this.logger.error('Update websites failed at:' + website.url + '\n' + error.message);

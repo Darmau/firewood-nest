@@ -46,6 +46,9 @@ export class Article {
   @Prop({ default: [] })
   tags: [String];
 
+  @Prop()
+  abstract: string;
+
   @Prop({
     default: 0,
   })

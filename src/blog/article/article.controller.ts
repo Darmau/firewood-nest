@@ -42,6 +42,7 @@ export class ArticleController {
       addArticleDto.title,
       addArticleDto.description,
       addArticleDto.publish_date,
+      addArticleDto.token
     );
   }
 
