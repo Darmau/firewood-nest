@@ -1,10 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
 import { Model } from 'mongoose';
 import { ArticleService } from 'src/blog/article/article.service';
 import { WebsiteService } from 'src/blog/website/website.service';
 import getBaiduToken from 'src/common/get-baidu-token';
+import { Statistic } from 'src/schemas/statistic.schema';
 import { Website } from 'src/schemas/website.schema';
 
 @Injectable()
@@ -12,6 +13,7 @@ export class AutoService {
   constructor(
     @InjectModel('Website') private websiteModel: Model<Website>,
     @InjectModel('Article') private articleModel: Model<Website>,
+    @InjectModel('Statistic') private statisticModel: Model<Statistic>,
     private articleService: ArticleService,
     private websiteService: WebsiteService,
   ) { }
@@ -46,19 +48,15 @@ export class AutoService {
   }
 
   // 一个月进行一次的任务。遍历所有article，检测是否可访问，不可访问的进行标记。
-  @Cron('0 0 0 2 * *')
+  @Cron('0 0 0 1 * *')
   async checkArticles() {
     const articles = await this.articleModel.find();
     this.logger.log('Start check ' + articles.length + ' articles');
 
     for (const article of articles) {
-      // 如果错误次数大于等于3次，删除该article
-      if (article.crawl_error >= 3) {
-        this.logger.warn(`Delete ${article.url} because of ${article.crawl_error} times error`);
-        await this.articleModel.findByIdAndDelete(article._id);
-        continue;
+      if(article.crawl_error > 3) {
+        continue; 
       }
-
       try {
         const res = await fetch(article.url, {
           method: 'HEAD',
@@ -76,5 +74,23 @@ export class AutoService {
         continue;
       }
     }
+  }
+
+  // 每天凌晨3点执行一次，计算网站和文章的数量，写入数据库
+  @Cron('0 0 3 * * *')
+  async updateStatistics() {
+    const date = new Date();
+    const websitesCount = await this.websiteModel.estimatedDocumentCount();
+    const articlesCount = await this.articleModel.estimatedDocumentCount();
+    const inaccessibleArticlesCount = await this.articleModel.countDocuments({ crawl_error: { $gte: 1 } });
+
+    const todayStatistic = await new this.statisticModel({
+      date: date,
+      website_count: websitesCount,
+      article_count: articlesCount,
+      inaccessible_article: inaccessibleArticlesCount,
+    });
+    await todayStatistic.save();
+    return this.logger.log('Update statistics success');
   }
 }
