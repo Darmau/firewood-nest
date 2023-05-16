@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { ArticleService } from 'src/blog/article/article.service';
 import { WebsiteService } from 'src/blog/website/website.service';
 import getBaiduToken from 'src/common/get-baidu-token';
+import { Article } from 'src/schemas/article.schema';
 import { Statistic } from 'src/schemas/statistic.schema';
 import { Website } from 'src/schemas/website.schema';
 
@@ -12,7 +13,7 @@ import { Website } from 'src/schemas/website.schema';
 export class AutoService {
   constructor(
     @InjectModel('Website') private websiteModel: Model<Website>,
-    @InjectModel('Article') private articleModel: Model<Website>,
+    @InjectModel('Article') private articleModel: Model<Article>,
     @InjectModel('Statistic') private statisticModel: Model<Statistic>,
     private articleService: ArticleService,
     private websiteService: WebsiteService,
@@ -77,20 +78,20 @@ export class AutoService {
   }
 
   // 每天凌晨3点执行一次，计算网站和文章的数量，写入数据库
-  @Cron('0 0 3 * * *')
-  async updateStatistics() {
-    const date = new Date();
-    const websitesCount = await this.websiteModel.estimatedDocumentCount();
-    const articlesCount = await this.articleModel.estimatedDocumentCount();
-    const inaccessibleArticlesCount = await this.articleModel.countDocuments({ crawl_error: { $gte: 1 } });
+  // @Cron('0 0 3 * * *')
+  // async updateStatistics() {
+  //   const date = new Date();
+  //   const websitesCount = await this.websiteModel.estimatedDocumentCount();
+  //   const articlesCount = await this.articleModel.estimatedDocumentCount();
+  //   const inaccessibleArticlesCount = await this.articleModel.countDocuments({ crawl_error: { $gte: 1 } });
 
-    const todayStatistic = await new this.statisticModel({
-      date: date,
-      website_count: websitesCount,
-      article_count: articlesCount,
-      inaccessible_article: inaccessibleArticlesCount,
-    });
-    await todayStatistic.save();
-    return this.logger.log('Update statistics success');
-  }
+  //   const todayStatistic = await new this.statisticModel({
+  //     date: date,
+  //     website_count: websitesCount,
+  //     article_count: articlesCount,
+  //     inaccessible_article: inaccessibleArticlesCount,
+  //   });
+  //   await todayStatistic.save();
+  //   return this.logger.log('Update statistics success');
+  // }
 }
