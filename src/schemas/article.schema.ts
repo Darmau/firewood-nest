@@ -59,6 +59,9 @@ export class Article {
 
   @Prop({ default: false })
   isBlocked: boolean;
+
+  @Prop({ default: 0 })
+  crawl_error: number;
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article);
