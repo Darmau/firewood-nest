@@ -68,4 +68,11 @@ export class WebsiteController {
   async deleteWebsite(@Query('id') id: string) {
     return await this.websiteService.deleteWebsite(id);
   }
+
+  // /website/last-year?id= GET
+  // 计算最近一年发布的文章数
+  @Get('last-year')
+  async getLastYearArticleCount(@Query('id') id: string) {
+    return await this.websiteService.getLastYearArticleCount(id);
+  }
 }

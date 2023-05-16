@@ -131,4 +131,24 @@ export class WebsiteService {
   async getWebsiteCount(): Promise<number> {
     return await this.websiteModel.find().countDocuments().exec();
   }
+
+  // 计算网站最近一年发布的文章
+  async getLastYearArticleCount(id: string): Promise<number> {
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+    return new Promise((resolve, reject) => {
+      this.articleModel.countDocuments({
+        website_id: id,
+        publish_date: { $gte: oneYearAgo },
+      }, (err, count) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(count);
+        }
+      });
+    });
+  }
+
 }

@@ -72,7 +72,7 @@ export class AutoService {
       } catch (error) {
         article.crawl_error += 1;
         await article.save();
-        this.logger.warn(`Failed to access ${article.url}, count: ${article.crawl_error}`);
+        this.logger.error(`Failed to access ${article.url}, count: ${article.crawl_error}`);
         continue;
       }
     }

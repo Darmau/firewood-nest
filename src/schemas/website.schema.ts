@@ -42,9 +42,6 @@ export class Website {
   })
   page_view: number;
 
-  @Prop()
-  frequency: number;
-
   @Prop({ default: Date.now, })
   last_publish: Date;
 
