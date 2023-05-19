@@ -7,23 +7,23 @@ import { AuthGuard } from 'src/auth/auth.guard';
 export class ArticleController {
   constructor(private articleService: ArticleService) { }
 
-  // /article/all?page=1&limit=10
-  @Get('all')
+  // /article/latest?page=1&limit=10
+  @Get('latest')
   async getAllArticle(@Query('page') page: number, @Query('limit') limit: number) {
     return await this.articleService.getAllArticle(page, limit);
   }
 
   // /article/featured?limit=5
   @Get('featured')
-  async getArticleByRecommend(@Query('limit') limit: number) {
-    return await this.articleService.getArticleByRecommend(limit);
+  async getArticleByRecommend(@Query('page') page: number, @Query('limit') limit: number) {
+    return await this.articleService.getArticleByRecommend(page, limit);
   }
 
   // 找出最新的指定分类的文章
-  // /article/topic/limit=6
+  // /article/topic?page=1&limit=6
   @Get('topic')
-  async getArticleByTopic(@Body('topic') topic: string, @Query('limit') limit: number) {
-    return await this.articleService.getArticleByTopic(topic, limit);
+  async getArticleByTopic(@Body('topic') topic: string, @Query('page') page: number, @Query('limit') limit: number) {
+    return await this.articleService.getArticleByTopic(topic, page, limit);
   }
 
   // /article/count

@@ -8,12 +8,6 @@ import { AuthGuard } from 'src/auth/auth.guard';
 export class WebsiteController {
   constructor(private websiteService: WebsiteService) { }
 
-  // /website/all?page=1&limit=10
-  @Get('all')
-  async getAllWebsite(@Query('page') page: number, @Query('limit') limit: number) {
-    return await this.websiteService.getAllWebsite(page, limit);
-  }
-
   // /website/most-view?page=1&limit=10
   @Get('most-view')
   async getWebsiteByPageView(@Query('page') page: number, @Query('limit') limit: number) {

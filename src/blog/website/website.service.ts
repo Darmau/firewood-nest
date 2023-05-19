@@ -13,11 +13,6 @@ export class WebsiteService {
     @InjectModel('Article') private articleModel: Model<Article>,
   ) { }
 
-  //根据document的id，获取所有网站
-  async getAllWebsite(page: number, limit: number): Promise<Website[]> {
-    return await this.websiteModel.find().skip((page - 1) * limit).limit(limit).exec();
-  }
-
   // 根据网站总访问量，倒序排列，获取所有网站
   async getWebsiteByPageView(page: number, limit: number): Promise<Website[]> {
     return await this.websiteModel.find().sort({ page_view: -1 }).skip((page - 1) * limit).limit(limit).exec();
@@ -49,6 +44,9 @@ export class WebsiteService {
     const website = await this.websiteModel.findById(id).exec();
     if (url) { website.url = url; }
     if (rss) { website.rss = rss; }
+    if (description) { website.description = description; }
+    if (cover) { website.cover = cover; }
+    // 修改文章内的网站名
     if (name) {
       website.name = name;
       const articles = await this.articleModel.find({ website_id: id }).exec();
@@ -59,8 +57,6 @@ export class WebsiteService {
         );
       };
     }
-    if (description) { website.description = description; }
-    if (cover) { website.cover = cover; }
     const newSite = await website.save();
     return newSite;
   }
