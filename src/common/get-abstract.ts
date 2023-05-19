@@ -4,10 +4,11 @@ export default async function getAbstract(title: string, content: string, token:
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify({
-        title: title.slice(0, 200),
-        content: content.slice(0, 3000),
+        title: title,
+        content: content,
         max_summary_len: 120,
       })
     })

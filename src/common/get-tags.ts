@@ -4,10 +4,11 @@ export default async function getTags(title: string, content: string, token: str
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify({
-        title: title.slice(0, 40),
-        content: content.slice(0, 30000),
+        title: title.slice,
+        content: content.slice,
       })
     });
   const tagsData = await tagsJson.json();

@@ -31,6 +31,13 @@ export default async function getArticleInfo(url: string, website: string, token
 
     } catch (error) {
       console.error(`Error extracting article: ${error}`);
+      return {
+        cover: null,
+        content: null,
+        abstract: null,
+        tags: null,
+        topic: null,
+      };
     }
     // 添加随机延时，1-10秒之间
     await new Promise(resolve => setTimeout(resolve, Math.random() * 10000));
