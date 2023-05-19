@@ -48,7 +48,7 @@ export class AutoService {
   }
 
   // 一个月进行一次的任务。遍历所有article，检测是否可访问，不可访问的进行标记。
-  @Cron('0 3 0 1 * *')
+  @Cron('0 0 4 5 * *')
   async checkArticles() {
     const articles = await this.articleModel.find();
     this.logger.log('Start check ' + articles.length + ' articles');
@@ -77,7 +77,7 @@ export class AutoService {
   }
 
   // 每天凌晨3点执行一次，计算网站和文章的数量，写入数据库
-  @Cron('0 0 3 * * *')
+  @Cron('0 0 2 * * *')
   async updateStatistics() {
     const date = new Date();
     const websitesCount = await this.websiteModel.estimatedDocumentCount();
