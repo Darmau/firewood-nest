@@ -1,3 +1,5 @@
+import sliceString from "./slice-string";
+
 export default async function getTopic(title: string, content: string, token: string) {
   const topicJson = await fetch(`https://aip.baidubce.com/rpc/2.0/nlp/v1/topic?charset=UTF-8&access_token=${token}`,
     {
@@ -7,8 +9,8 @@ export default async function getTopic(title: string, content: string, token: st
         'Accept': 'application/json'
       },
       body: JSON.stringify({
-        title: title,
-        content: content,
+        title: sliceString(title, 80),
+        content: sliceString(content, 65535)
       })
     });
 
