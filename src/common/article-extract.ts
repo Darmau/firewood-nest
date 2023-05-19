@@ -33,7 +33,7 @@ export default async function getArticleInfo(url: string, website: string, token
       console.error(`Error extracting article: ${error}`);
       return {
         cover: null,
-        content: article.content || null,
+        content: article ? article.content : null,
         abstract: abstract,
         tags: tags,
         topic: topic,
