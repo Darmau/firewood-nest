@@ -6,7 +6,7 @@ export default async function getAbstract(title: string, content: string, token:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        title: title,
+        title: title.slice(0, 200),
         content: content.slice(0, 3000),
         max_summary_len: 120,
       })

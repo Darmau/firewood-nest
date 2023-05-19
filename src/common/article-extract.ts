@@ -3,6 +3,7 @@ import imageProcess from './image-process';
 import * as cheerio from 'cheerio';
 import getAbstract from './get-abstract';
 import getTags from './get-tags';
+import getTopic from './get-topic';
 
 // 本函数用于从文章中提取出相应信息，包括标题、描述、内容、图片等。
 export default async function getArticleInfo(url: string, website: string, token: string) {
@@ -11,6 +12,7 @@ export default async function getArticleInfo(url: string, website: string, token
   let images = null;
   let abstract = '';
   let tags = [];
+  let topic = { lv1: '', lv2: []}
   while (!article && retries < 2) {
     try {
       article = await extract(url);
@@ -22,6 +24,9 @@ export default async function getArticleInfo(url: string, website: string, token
 
         // 获取文章标签
         tags = await getTags(article.title, contentString, token);
+
+        // 获取文章分类
+        topic = await getTopic(article.title, contentString, token);
       }
 
     } catch (error) {
@@ -38,6 +43,7 @@ export default async function getArticleInfo(url: string, website: string, token
       content: null,
       abstract: null,
       tags: null,
+      topic: null,
     };
   }
   try {
@@ -50,5 +56,6 @@ export default async function getArticleInfo(url: string, website: string, token
     content: article.content,
     abstract: abstract,
     tags: tags,
+    topic: topic,
   };
 }

@@ -6,10 +6,11 @@ export default async function getTags(title: string, content: string, token: str
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        title: title,
-        content: content.slice(0, 3000),
+        title: title.slice(0, 40),
+        content: content.slice(0, 30000),
       })
     });
   const tagsData = await tagsJson.json();
-  return tagsData.items;
+  const tags = await tagsData.items.map((item) => item.tag);
+  return tags;
 }
