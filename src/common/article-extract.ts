@@ -12,7 +12,7 @@ export default async function getArticleInfo(url: string, website: string, token
   let images = null;
   let abstract = '';
   let tags = [];
-  let topic = { lv1: '', lv2: []}
+  let topic = {}
   while (!article && retries < 2) {
     try {
       article = await extract(url);
