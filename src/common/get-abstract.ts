@@ -1,5 +1,3 @@
-import sliceString from "./slice-string";
-
 export default async function getAbstract(title: string, content: string, token: string) {
   const abstractJson = await fetch(`https://aip.baidubce.com/rpc/2.0/nlp/v1/news_summary?charset=UTF-8&access_token=${token}`,
     {
@@ -14,6 +12,11 @@ export default async function getAbstract(title: string, content: string, token:
         max_summary_len: 120,
       })
     })
-  const abstractData = await abstractJson.json();
-  return abstractData.summary;
+
+    try {
+      const abstractData = await abstractJson.json();
+      return abstractData.summary;
+    } catch {
+      return null;
+    }
 }

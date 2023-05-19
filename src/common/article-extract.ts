@@ -10,9 +10,9 @@ export default async function getArticleInfo(url: string, website: string, token
   let article;
   let retries = 0;
   let images = null;
-  let abstract = '';
-  let tags = [];
-  let topic = {}
+  let abstract = null;
+  let tags = null;
+  let topic = null;
   while (!article && retries < 2) {
     try {
       article = await extract(url);
@@ -33,10 +33,10 @@ export default async function getArticleInfo(url: string, website: string, token
       console.error(`Error extracting article: ${error}`);
       return {
         cover: null,
-        content: null,
-        abstract: null,
-        tags: null,
-        topic: null,
+        content: article.content || null,
+        abstract: abstract,
+        tags: tags,
+        topic: topic,
       };
     }
     // 添加随机延时，1-10秒之间
@@ -60,7 +60,7 @@ export default async function getArticleInfo(url: string, website: string, token
   }
   return {
     covers: images,
-    content: article.content,
+    content: article.content || null,
     abstract: abstract,
     tags: tags,
     topic: topic,

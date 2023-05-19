@@ -56,6 +56,7 @@ export class ArticleService {
       content: article.content,
       abstract: article.abstract,
       tags: article.tags,
+      topic: article.topic,
     });
 
     await newArticle.save();

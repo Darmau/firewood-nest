@@ -49,16 +49,8 @@ export class Article {
   @Prop({ default: [] })
   tags: [String];
 
-  @Prop({
-    type: {
-      lv1: { type: String, index: true },
-      lv2: { type: [String] },
-    }
-  })
-  topic: {
-    lv1: string;
-    lv2: string[];
-  }
+  @Prop()
+  topic: string;
 
   @Prop()
   abstract: string;

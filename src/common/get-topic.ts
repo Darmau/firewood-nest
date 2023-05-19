@@ -14,12 +14,10 @@ export default async function getTopic(title: string, content: string, token: st
       })
     });
 
-  const topic = await topicJson.json();
-  const lv1_tag = await topic.item.lv1_tag_list[0].tag;
-  const lv2_tag = await topic.item.lv2_tag_list.map((item) => item.tag);
-
-  return {
-    lv1: lv1_tag,
-    lv2: lv2_tag,
-  };
+    try {
+      const topic = await topicJson.json();
+      return topic.item.lv1_tag_list[0].tag;
+    } catch {
+      return null;
+    }
 }
