@@ -16,6 +16,9 @@ export class Article {
   @Prop()
   website: string;
 
+  @Prop()
+  author: string;
+
   @Prop({
     required: true,
     unique: true,
@@ -49,7 +52,7 @@ export class Article {
   @Prop({
     type: {
       lv1: { type: String, index: true },
-      lv2: { type: [String]},
+      lv2: { type: [String] },
     }
   })
   topic: {

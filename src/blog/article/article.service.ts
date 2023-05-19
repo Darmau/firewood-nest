@@ -1,4 +1,4 @@
-import {extract} from '@extractus/feed-extractor';
+import { extract } from '@extractus/feed-extractor';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
@@ -35,7 +35,7 @@ export class ArticleService {
   }
 
   // 新增文章
-  async addArticle(url: string, website_id: mongoose.Types.ObjectId, website: string, title: string, description: string, publish_date: Date, token): Promise<Article | String> {
+  async addArticle(url: string, website_id: mongoose.Types.ObjectId, website: string, title: string, description: string, publish_date: Date, author: string, token): Promise<Article | String> {
     // 查询是否已存在该 article
     const existArticle = await this.articleModel.findOne({ url: url }).exec();
     if (existArticle) {
@@ -47,6 +47,7 @@ export class ArticleService {
     const newArticle = await new this.articleModel({
       website_id: website_id,
       website: website,
+      author: author,
       url: url,
       title: title,
       description: description,
@@ -78,6 +79,7 @@ export class ArticleService {
 
     const websiteId = website._id;
     const websiteUrl = website.url;
+    const author = website.name;
     const rss = website.rss;
     if (!rss) {
       throw new Error('该网站没有rss');
@@ -88,7 +90,7 @@ export class ArticleService {
 
     for (const item of feed.entries) {
       try {
-        await this.addArticle(item.link, websiteId, websiteUrl, item.title, item.description, item.published, token);
+        await this.addArticle(item.link, websiteId, websiteUrl, item.title, item.description, item.published, author, token);
       } catch {
         this.logger.error(`Add article ${item.title} of url ${item.link} failed`)
         continue;

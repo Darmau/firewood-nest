@@ -12,6 +12,8 @@ export class AddArticleDto {
   @IsUrl()
   website: string;
 
+  author: string;
+
   @IsNotEmpty()
   title: string;
 

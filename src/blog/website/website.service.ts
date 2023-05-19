@@ -49,7 +49,16 @@ export class WebsiteService {
     const website = await this.websiteModel.findById(id).exec();
     if (url) { website.url = url; }
     if (rss) { website.rss = rss; }
-    if (name) { website.name = name; }
+    if (name) {
+      website.name = name;
+      const articles = await this.articleModel.find({ website_id: id }).exec();
+      for (const article of articles) {
+        await this.articleModel.findByIdAndUpdate(
+          article._id,
+          { author: name },
+        );
+      };
+    }
     if (description) { website.description = description; }
     if (cover) { website.cover = cover; }
     const newSite = await website.save();
