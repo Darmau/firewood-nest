@@ -19,6 +19,13 @@ export class ArticleController {
     return await this.articleService.getArticleByRecommend(limit);
   }
 
+  // 找出最新的指定分类的文章
+  // /article/topic/limit=6
+  @Get('topic')
+  async getArticleByTopic(@Body('topic') topic: string, @Query('limit') limit: number) {
+    return await this.articleService.getArticleByTopic(topic, limit);
+  }
+
   // /article/count
   @Get('count')
   async getArticleCount() {

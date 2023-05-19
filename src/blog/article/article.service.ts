@@ -24,6 +24,11 @@ export class ArticleService {
     return await this.articleModel.find({ isFeatured: true }).limit(limit).exec();
   }
 
+  // 获得指定分类的最新文章
+  async getArticleByTopic(topic: string, limit: number): Promise<Article[]> {
+    return await this.articleModel.find({ "topic.lv1": topic }).sort({ last_publish: -1 }).limit(limit).exec();
+  }
+
   // 获取指定博客所有文章
   async getArticleByBlog(website: string, page: number, limit: number): Promise<Article[]> {
     return await this.articleModel.find({ website: website }).skip((page - 1) * limit).limit(limit).exec();
