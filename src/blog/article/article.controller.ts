@@ -20,9 +20,9 @@ export class ArticleController {
   }
 
   // 找出最新的指定分类的文章
-  // /article/topic?page=1&limit=6
+  // /article/topic?topic=&page=1&limit=6
   @Get('topic')
-  async getArticleByTopic(@Body('topic') topic: string, @Query('page') page: number, @Query('limit') limit: number) {
+  async getArticleByTopic(@Query('topic') topic: string, @Query('page') page: number, @Query('limit') limit: number) {
     return await this.articleService.getArticleByTopic(topic, page, limit);
   }
 

@@ -26,7 +26,7 @@ export class ArticleService {
 
   // 获得指定分类的最新文章
   async getArticleByTopic(topic: string, page: number, limit: number): Promise<Article[]> {
-    return await this.articleModel.find({ "topic.lv1": topic }).sort({ last_publish: -1 }).skip((page - 1) * limit).limit(limit).exec();
+    return await this.articleModel.find({ "topic": topic }).sort({ last_publish: -1 }).skip((page - 1) * limit).limit(limit).exec();
   }
 
   // 获取指定博客所有文章
