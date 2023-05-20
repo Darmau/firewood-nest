@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { ArticleService } from './article.service';
-import { AddArticleDto } from 'src/dto/addArticle.dto';
+import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { AddArticleDto } from 'src/dto/addArticle.dto';
+import { ArticleService } from './article.service';
 
 @Controller('article')
 export class ArticleController {

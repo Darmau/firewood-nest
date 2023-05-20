@@ -16,17 +16,17 @@ export class ArticleService {
 
   // 根据最近发布时间，从最新到最旧，获取所有文章
   async getAllArticle(page: number, limit: number): Promise<Article[]> {
-    return await this.articleModel.find().sort({ last_publish: -1 }).skip((page - 1) * limit).limit(limit).exec();
+    return await this.articleModel.find().sort({ publish_date: -1 }).skip((page - 1) * limit).limit(limit).exec();
   }
 
   // 获取编辑推荐文章
   async getArticleByRecommend(page: number, limit: number): Promise<Article[]> {
-    return await this.articleModel.find({ isFeatured: true }).sort({ last_publish: -1 }).skip((page - 1) * limit).limit(limit).exec();
+    return await this.articleModel.find({ isFeatured: true }).sort({ publish_date: -1 }).skip((page - 1) * limit).limit(limit).exec();
   }
 
   // 获得指定分类的最新文章
   async getArticleByTopic(topic: string, page: number, limit: number): Promise<Article[]> {
-    return await this.articleModel.find({ "topic": topic }).sort({ last_publish: -1 }).skip((page - 1) * limit).limit(limit).exec();
+    return await this.articleModel.find({ "topic": topic }).sort({ publish_date: -1 }).skip((page - 1) * limit).limit(limit).exec();
   }
 
   // 获取指定博客所有文章
@@ -115,7 +115,7 @@ export class ArticleService {
 
   // 管理员封禁某篇文章
   async blockArticle(id: string): Promise<Article> {
-    const blockedArticle = await this.articleModel.findByIdAndUpdate(id, { isBlock: true }).exec();
+    const blockedArticle = await this.articleModel.findByIdAndUpdate(id, { isBlocked: true }).exec();
     return await blockedArticle.save();
   }
 

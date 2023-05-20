@@ -1,10 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as cheerio from 'cheerio';
 import { Model } from 'mongoose';
 import { Article } from 'src/schemas/article.schema';
 import { Website } from 'src/schemas/website.schema';
-import { ArticleService } from '../article/article.service';
 
 @Injectable()
 export class WebsiteService {
@@ -20,7 +19,7 @@ export class WebsiteService {
 
   // 根据最近更新时间，倒序排列，获取所有网站，根据传入的page和limit分页
   async getWebsiteByLastPublish(page: number, limit: number): Promise<Website[]> {
-    return await this.websiteModel.find().sort({ publish_date: -1 }).skip((page - 1) * limit).limit(limit).exec();
+    return await this.websiteModel.find().sort({ last_publish: -1 }).skip((page - 1) * limit).limit(limit).exec();
   }
 
   // 根据id获取指定网站信息
