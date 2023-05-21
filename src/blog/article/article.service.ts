@@ -132,10 +132,11 @@ export class ArticleService {
   }
 
   // 访问量记录，每次访问，访问量+1
-  async addPageView(id: string): Promise<Article> {
+  async addPageView(id: string): Promise<Number> {
     const article = await this.articleModel.findById(id).exec();
     article.page_view += 1;
-    return await article.save();
+    await article.save();
+    return article.page_view;
   }
 
   // 获取文章总数
