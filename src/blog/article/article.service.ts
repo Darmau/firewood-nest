@@ -140,7 +140,15 @@ export class ArticleService {
   }
 
   // 获取文章总数
-  async getArticleCount(): Promise<number> {
-    return await this.articleModel.find().countDocuments().exec();
+  async getArticleCount(type: string, topic?: string, startAt?: Date, endAt?: Date): Promise<number> {
+    switch (type) {
+      case 'all': return await this.articleModel.countDocuments().exec();
+
+      case 'topic': return await this.articleModel.countDocuments({ topic: topic }).exec();
+
+      case 'date': return await this.articleModel.countDocuments({ publish_date: { $gte: startAt, $lte: endAt } }).exec();
+
+      default: return await this.articleModel.countDocuments().exec();
+    }
   }
 }

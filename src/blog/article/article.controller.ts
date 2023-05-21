@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/comm
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AddArticleDto } from 'src/dto/addArticle.dto';
 import { ArticleService } from './article.service';
+import { GetArticleCountDto } from 'src/dto/getArticleCount.dto';
 
 @Controller('article')
 export class ArticleController {
@@ -13,7 +14,7 @@ export class ArticleController {
     return await this.articleService.getAllArticle(page, limit);
   }
 
-  // /article/featured?limit=5
+  // /article/featured?page=&limit=5
   @Get('featured')
   async getArticleByRecommend(@Query('page') page: number, @Query('limit') limit: number) {
     return await this.articleService.getArticleByRecommend(page, limit);
@@ -28,8 +29,13 @@ export class ArticleController {
 
   // /article/count
   @Get('count')
-  async getArticleCount() {
-    return await this.articleService.getArticleCount();
+  async getArticleCount(@Body() getArticleCount: GetArticleCountDto) {
+    return await this.articleService.getArticleCount(
+      getArticleCount.type,
+      getArticleCount.topic,
+      getArticleCount.startAt,
+      getArticleCount.endAt
+    );
   }
 
   // /article?website=https://darmau.design&page=1&limit=10
