@@ -28,7 +28,7 @@ export class ArticleController {
   }
 
   // /article/count
-  @Get('count')
+  @Post('count')
   async getArticleCount(@Body() getArticleCount: GetArticleCountDto) {
     return await this.articleService.getArticleCount(
       getArticleCount.type,
