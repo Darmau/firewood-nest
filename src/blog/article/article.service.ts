@@ -144,6 +144,8 @@ export class ArticleService {
     switch (type) {
       case 'all': return await this.articleModel.countDocuments().exec();
 
+      case 'featured': return await this.articleModel.countDocuments({ isFeatured: true }).exec();
+
       case 'topic': return await this.articleModel.countDocuments({ topic: topic }).exec();
 
       case 'date': return await this.articleModel.countDocuments({ publish_date: { $gte: startAt, $lte: endAt } }).exec();
