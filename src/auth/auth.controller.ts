@@ -1,9 +1,10 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { SignDto } from 'src/dto/sign.dto';
 import { User } from 'src/schemas/user.schema';
 import { AuthService } from './auth.service';
+import { AuthGuard } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -27,5 +28,11 @@ export class AuthController {
   }
   
   // /auth/validate GET
-  
+  // 检测access_token是否有效
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Get('validate')
+  validate() {
+    return this.authService.validate();
+  }
 }

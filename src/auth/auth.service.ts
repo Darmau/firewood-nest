@@ -56,4 +56,11 @@ export class AuthService {
       throw new UnauthorizedException('Register failed');
     }
   }
+
+  // 检测access_token是否有效
+  async validate() {
+    return {
+      message: "success",
+    }
+  }
 }

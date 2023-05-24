@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Cron } from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { Model } from 'mongoose';
 import { ArticleService } from 'src/blog/article/article.service';
 import { WebsiteService } from 'src/blog/website/website.service';
@@ -21,7 +21,7 @@ export class AutoService {
   private readonly logger = new Logger(AutoService.name);
 
   // 获取所有website，分别将url传入updateArticlesByWebsite方法, 每4小时执行一次
-  @Cron('0 0 */4 * * *')
+  @Cron(CronExpression.EVERY_10_MINUTES)
   async updateArticle() {
     // 获取百度API token并传入，减少重复获取token的次数
     const token = await getBaiduToken();
@@ -48,6 +48,7 @@ export class AutoService {
   }
 
   // 一个月进行一次的任务。遍历所有article，检测是否可访问，不可访问的进行标记。
+  @Cron(CronExpression.EVERY_30_MINUTES)
   async checkArticles() {
     const articles = await this.articleModel.find();
     this.logger.log('Start check ' + articles.length + ' articles');
@@ -76,7 +77,7 @@ export class AutoService {
   }
 
   // 每天凌晨3点执行一次，计算网站和文章的数量，写入数据库
-  @Cron('0 0 2 * * *')
+  @Cron(CronExpression.EVERY_30_MINUTES)
   async updateStatistics() {
     const date = new Date();
     const websitesCount = await this.websiteModel.estimatedDocumentCount();
