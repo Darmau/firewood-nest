@@ -33,9 +33,10 @@ export class WebsiteService {
       url = url.slice(0, -1);
     }
     const website = new this.websiteModel({ url: url, name: name });
-    const newSite = await website.save();
+    await website.save();
     await this.updateWebsiteInfo(url);
-    return newSite;
+    const updatedSite = await this.websiteModel.findOne({ url: url }).exec();
+    return updatedSite;
   }
 
   // 管理员修改网站信息
