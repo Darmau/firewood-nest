@@ -51,7 +51,7 @@ export class ArticleService {
       url: url,
       title: title,
       description: description,
-      publish_date: publish_date,
+      publish_date: publish_date || new Date(),
       cover: article.covers,
       content: article.content,
       abstract: article.abstract,
