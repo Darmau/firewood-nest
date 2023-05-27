@@ -10,6 +10,12 @@ export class ArticleController {
 
   // /article/latest?page=1&limit=10
   @Get('latest')
+  async getAllUnblockedArticle(@Query('page') page: number, @Query('limit') limit: number) {
+    return await this.articleService.getAllUnblockedArticle(page, limit);
+  }
+
+  // /article/all?page=1&limit=10
+  @Get('all')
   async getAllArticle(@Query('page') page: number, @Query('limit') limit: number) {
     return await this.articleService.getAllArticle(page, limit);
   }
