@@ -36,12 +36,8 @@ export class Article {
   @Prop()
   publish_date: Date;
 
-  @Prop(raw({
-    jpg: { type: String },
-    webp: { type: String },
-    avif: { type: String },
-  }))
-  cover: Record<'jpg' | 'webp' | 'avif', string> | null;
+  @Prop()
+  cover: string;
 
   @Prop({ default: false })
   isFeatured: boolean;

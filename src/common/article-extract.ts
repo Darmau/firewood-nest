@@ -1,9 +1,9 @@
 import { extract } from '@extractus/article-extractor'
-import imageProcess from './image-process';
 import * as cheerio from 'cheerio';
 import getAbstract from './get-abstract';
 import getTags from './get-tags';
 import getTopic from './get-topic';
+import cloudflareImage from './cloudflare-image';
 
 // 本函数用于从文章中提取出相应信息，包括标题、描述、内容、图片等。
 export default async function getArticleInfo(url: string, website: string, token: string) {
@@ -54,7 +54,7 @@ export default async function getArticleInfo(url: string, website: string, token
     };
   }
   try {
-    images = await imageProcess(website, article.image);
+    images = await cloudflareImage(article.image, website);
   } catch {
     console.error(`Error processing image of: ${article.title}`);
   }
