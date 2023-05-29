@@ -69,12 +69,4 @@ export class WebsiteController {
   async getLastYearArticleCount(@Query('id') id: string) {
     return await this.websiteService.getLastYearArticleCount(id);
   }
-
-  // 获取网站统计数据
-  // /website/statistic?count=10
-  @UseGuards(AuthGuard)
-  @Get('statistic')
-  async getWebsiteStatistic(@Query('count') count: number) {
-    return await this.websiteService.getWebsiteStatistic(count);
-  }
 }

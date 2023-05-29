@@ -8,7 +8,7 @@ import { WebsiteSchema } from 'src/schemas/website.schema';
 import { ArticleSchema } from 'src/schemas/article.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'Website', schema: WebsiteSchema }, { name: 'Article', schema: ArticleSchema }, { name: 'Statistic', schema: ArticleSchema }])],
+  imports: [MongooseModule.forFeature([{ name: 'Website', schema: WebsiteSchema }, { name: 'Article', schema: ArticleSchema }])],
   controllers: [WebsiteController, ArticleController],
   providers: [WebsiteService, ArticleService],
   exports: [WebsiteService, ArticleService]

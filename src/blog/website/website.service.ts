@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as cheerio from 'cheerio';
 import { Model } from 'mongoose';
 import { Article } from 'src/schemas/article.schema';
-import { Statistic } from 'src/schemas/statistic.schema';
 import { Website } from 'src/schemas/website.schema';
 
 @Injectable()
@@ -11,7 +10,6 @@ export class WebsiteService {
   constructor(
     @InjectModel('Website') private websiteModel: Model<Website>,
     @InjectModel('Article') private articleModel: Model<Article>,
-    @InjectModel('Statistic') private statisticModel: Model<Statistic>,
   ) { }
 
   // 根据网站总访问量，倒序排列，获取所有网站
@@ -156,12 +154,6 @@ export class WebsiteService {
         }
       });
     });
-  }
-
-  // 获取网站统计数据
-  async getWebsiteStatistic(count: number): Promise<Statistic[]> {
-    const status = await this.statisticModel.find().sort({ date: -1 }).limit(count).exec();
-    return status;
   }
 
 }
