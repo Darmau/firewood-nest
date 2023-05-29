@@ -47,34 +47,43 @@ export class AutoService {
     }
   }
 
-  // 一个月进行一次的任务。遍历所有article，检测是否可访问，不可访问的进行标记。
-  @Cron('0 0 3 5 * *')
-  async checkArticles() {
-    const articles = await this.articleModel.find();
-    this.logger.log('Start check ' + articles.length + ' articles');
+  // 一个月进行一次的任务。遍历所有article，一次1000篇。检测是否可访问，不可访问的进行标记。
+  @Cron('0 0 3 * * *')
+async checkArticles() {
+  // 获取当前日期
+  const currentDate = new Date();
+  // 计算当前月份的第几天
+  const currentDayOfMonth = currentDate.getDate();
+  // 计算这个月开始检查文章的偏移量
+  const offset = (currentDayOfMonth - 1) * 1000;
 
-    for (const article of articles) {
-      if(article.crawl_error > 3) {
-        continue; 
-      }
-      try {
-        const res = await fetch(article.url, {
-          method: 'HEAD',
-          redirect: 'follow',
-        });
-        if (!res.ok) {
-          article.crawl_error += 1;
-          await article.save();
-          this.logger.warn(`Failed to access ${article.url}, count: ${article.crawl_error}`);
-        }
-      } catch (error) {
+  // 按publish_date从旧到新排序，设置每次查询的数量为1000，并根据偏移量查询
+  const articles = await this.articleModel.find()
+    .sort({ publish_date: 1 })
+    .limit(1000)
+    .skip(offset);
+
+  this.logger.log(`Start check articles from ${offset} to ${offset + 1000}`);
+
+  for (const article of articles) {
+    try {
+      const res = await fetch(article.url, {
+        method: 'HEAD',
+        redirect: 'follow',
+      });
+      if (!res.ok) {
         article.crawl_error += 1;
         await article.save();
-        this.logger.error(`Failed to access ${article.url}, count: ${article.crawl_error}`);
-        continue;
+        this.logger.warn(`Failed to access ${article.url}, count: ${article.crawl_error}`);
       }
+    } catch (error) {
+      article.crawl_error += 1;
+      await article.save();
+      this.logger.error(`Failed to access ${article.url}, count: ${article.crawl_error}`);
+      continue;
     }
   }
+}
 
   // 每天凌晨1点执行一次，计算网站和文章的数量，写入数据库
   @Cron('0 0 1 * * *')
