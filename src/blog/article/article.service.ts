@@ -112,15 +112,17 @@ export class ArticleService {
 
   }
 
-  //设置某篇文章isFeatured为true
+  //切换某篇文章isFeatured的状态
   async setFeaturedArticle(id: string): Promise<Article> {
-    const featuredArticle = await this.articleModel.findByIdAndUpdate(id, { isFeatured: true }).exec();
+    const featuredArticle = await this.articleModel.findById(id).exec();
+    featuredArticle.isFeatured = !featuredArticle.isFeatured;
     return await featuredArticle.save();
   }
 
-  // 管理员封禁某篇文章
+  // 管理员封禁或解禁某篇文章
   async blockArticle(id: string): Promise<Article> {
-    const blockedArticle = await this.articleModel.findByIdAndUpdate(id, { isBlocked: true }).exec();
+    const blockedArticle = await this.articleModel.findById(id).exec();
+    blockedArticle.isBlocked = !blockedArticle.isBlocked;
     return await blockedArticle.save();
   }
 

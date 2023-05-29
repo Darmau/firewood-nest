@@ -79,7 +79,7 @@ export class ArticleController {
     return await this.articleService.addPageView(id);
   }
 
-  // /article/feature?url= PUT
+  // /article/feature?id= PUT
   @UseGuards(AuthGuard)
   @Put('feature')
   async featureArticle(@Query('id') id: string) {
