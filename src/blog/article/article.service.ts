@@ -36,7 +36,7 @@ export class ArticleService {
 
   // 获取指定博客所有文章
   async getArticleByBlog(website: string, page: number, limit: number): Promise<Article[]> {
-    return await this.articleModel.find({ website: website, isBlocked: { $ne: true } }).skip((page - 1) * limit).limit(limit).exec();
+    return await this.articleModel.find({ website: website, isBlocked: { $ne: true } }).sort({ publish_date: -1 }).skip((page - 1) * limit).limit(limit).exec();
   }
 
   // 新增文章
