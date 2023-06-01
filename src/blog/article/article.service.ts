@@ -52,7 +52,7 @@ export class ArticleService {
         publish_date: publish_date,
       });
       this.logger.log(`Update existed article ${title}`)
-      return 'Update article'
+      return existArticle
     }
 
     const article = await getArticleInfo(url, website, token);
