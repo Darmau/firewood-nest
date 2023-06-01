@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import getArticleInfo from 'src/common/article-extract';
-import convertToDate from 'src/common/convert-date';
+import convertDate from 'src/common/convert-date';
 import { Article } from 'src/schemas/article.schema';
 import { Website } from 'src/schemas/website.schema';
 
@@ -101,8 +101,9 @@ export class ArticleService {
 
     for (const item of feed.entries) {
       try {
-        const published = convertToDate(item.published)
-        await this.addArticle(item.link, websiteId, websiteUrl, item.title, item.description, published, author, token);
+        const publish_date = convertDate(item.published)
+        this.logger.log(`The publish date is ${publish_date}, original date is ${item.published}`)
+        await this.addArticle(item.link, websiteId, websiteUrl, item.title, item.description, publish_date, author, token);
       } catch {
         this.logger.error(`Add article ${item.title} of url ${item.link} failed`)
         continue;
@@ -113,8 +114,8 @@ export class ArticleService {
 
     // 更新网站文章数量
     const articleCount = await this.getArticleCountByWebsite(url);
-    await this.websiteModel.findOneAndUpdate({ url: url }, { article_count: articleCount }).exec();
-    return await this.websiteModel.findById(websiteId).exec();
+    await this.websiteModel.findOneAndUpdate({ url: url }, { article_count: articleCount });
+    return await this.websiteModel.findById(websiteId);
 
   }
 
