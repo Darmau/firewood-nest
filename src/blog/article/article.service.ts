@@ -51,7 +51,6 @@ export class ArticleService {
         description: description,
         publish_date: publish_date,
       });
-      this.logger.log(`Update existed article ${title}`)
       return existArticle;
     }
 
