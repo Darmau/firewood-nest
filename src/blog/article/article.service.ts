@@ -94,8 +94,9 @@ export class ArticleService {
 
     // 从feed中提取文章信息，并找到content和summary
     let feed = await extract(rss, { useISODateFormat: false });
+    const limitedEntries = await feed.entries.slice(0, 50)
 
-    for (const item of feed.entries) {
+    for (const item of limitedEntries) {
       try {
         // 转换日期为统一的ISO格式
         const publish_date = convertDate(item.published)
