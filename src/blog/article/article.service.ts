@@ -52,7 +52,7 @@ export class ArticleService {
         publish_date: publish_date,
       });
       this.logger.log(`Update existed article ${title}`)
-      return existArticle
+      return existArticle;
     }
 
     const article = await getArticleInfo(url, website, token);
@@ -64,7 +64,7 @@ export class ArticleService {
       url: url,
       title: title,
       description: description,
-      publish_date: publish_date || new Date(),
+      publish_date: publish_date,
       cover: article.covers,
       content: article.content,
       abstract: article.abstract,
@@ -100,16 +100,11 @@ export class ArticleService {
     }
 
     // 从feed中提取文章信息，并找到content和summary
-    let feed = await extract(rss);
-
-    // 检测日期是否使用ISO date string
-    if (!feed.entries[0].published) {
-      feed = await extract(rss, { useISODateFormat: false })
-    }
+    let feed = await extract(rss, { useISODateFormat: false });
 
     for (const item of feed.entries) {
       try {
-        const published = await convertToISOString(item.published)
+        const published = convertToISOString(item.published)
         await this.addArticle(item.link, websiteId, websiteUrl, item.title, item.description, published, author, token);
       } catch {
         this.logger.error(`Add article ${item.title} of url ${item.link} failed`)
