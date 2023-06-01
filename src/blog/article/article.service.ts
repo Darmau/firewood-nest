@@ -45,11 +45,7 @@ export class ArticleService {
     // 查询是否已存在该 article
     const existArticle = await this.articleModel.findOne({ url: url }).exec();
     if (existArticle) {
-      return await this.articleModel.findOneAndUpdate({ url: url }, {
-        title: title,
-        description: description,
-        publish_date: publish_date,
-      });
+      return existArticle;
     }
 
     const article = await getArticleInfo(url, website, token);
@@ -101,8 +97,8 @@ export class ArticleService {
 
     for (const item of feed.entries) {
       try {
+        // 转换日期为统一的ISO格式
         const publish_date = convertDate(item.published)
-        this.logger.log(`The publish date is ${publish_date}, original date is ${item.published}`)
         await this.addArticle(item.link, websiteId, websiteUrl, item.title, item.description, publish_date, author, token);
       } catch {
         this.logger.error(`Add article ${item.title} of url ${item.link} failed`)
