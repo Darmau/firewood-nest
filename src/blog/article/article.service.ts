@@ -45,7 +45,13 @@ export class ArticleService {
     // 查询是否已存在该 article
     const existArticle = await this.articleModel.findOne({ url: url }).exec();
     if (existArticle) {
-      return 'Article already exists';
+      // 将发布日期更新
+      await this.articleModel.findOneAndUpdate({ url: url }, {
+        title: title,
+        description: description,
+        publish_date: publish_date,
+      });
+      // return 'Article already exists';
     }
 
     const article = await getArticleInfo(url, website, token);
@@ -96,7 +102,7 @@ export class ArticleService {
     let feed = await extract(rss);
 
     // 检测日期是否使用ISO date string
-    if(!feed.entries[0].published) {
+    if (!feed.entries[0].published) {
       feed = await extract(rss, { useISODateFormat: false })
     }
 
