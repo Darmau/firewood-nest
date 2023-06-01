@@ -45,11 +45,7 @@ export class ArticleService {
     // 查询是否已存在该 article
     const existArticle = await this.articleModel.findOne({ url: url }).exec();
     if (existArticle) {
-      return await this.articleModel.findOneAndUpdate({ url: url }, {
-        title: title,
-        description: description,
-        publish_date: publish_date,
-      });
+      return existArticle;
     }
 
     const article = await getArticleInfo(url, website, token);
