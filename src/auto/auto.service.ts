@@ -21,7 +21,8 @@ export class AutoService {
   private readonly logger = new Logger(AutoService.name);
 
   // 获取所有website，分别将url传入updateArticlesByWebsite方法, 每2小时执行一次
-  @Cron('0 0 7-23/4 * * *')
+  // @Cron('0 0 7-23/4 * * *')
+  @Cron('0 0 1 * * *')
   async updateArticle() {
     // 获取百度API token并传入，减少重复获取token的次数
     const token = await getBaiduToken();
