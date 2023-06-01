@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import getArticleInfo from 'src/common/article-extract';
+import convertToISOString from 'src/common/convert-date';
 import { Article } from 'src/schemas/article.schema';
 import { Website } from 'src/schemas/website.schema';
 
@@ -92,11 +93,17 @@ export class ArticleService {
     }
 
     // 从feed中提取文章信息，并找到content和summary
-    const feed = await extract(rss);
+    let feed = await extract(rss);
+
+    // 检测日期是否使用ISO date string
+    if(!feed.entries[0].published) {
+      feed = await extract(rss, { useISODateFormat: false })
+    }
 
     for (const item of feed.entries) {
       try {
-        await this.addArticle(item.link, websiteId, websiteUrl, item.title, item.description, item.published, author, token);
+        const published = convertToISOString(item.published)
+        await this.addArticle(item.link, websiteId, websiteUrl, item.title, item.description, published, author, token);
       } catch {
         this.logger.error(`Add article ${item.title} of url ${item.link} failed`)
         continue;
