@@ -45,13 +45,14 @@ export class ArticleService {
     // 查询是否已存在该 article
     const existArticle = await this.articleModel.findOne({ url: url }).exec();
     if (existArticle) {
-      // 将发布日期更新
+      // 如果文章已存在，进行更新
       await this.articleModel.findOneAndUpdate({ url: url }, {
         title: title,
         description: description,
         publish_date: publish_date,
       });
-      // return 'Article already exists';
+      this.logger.log(`Update existed article ${title}`)
+      return 'Update article'
     }
 
     const article = await getArticleInfo(url, website, token);
@@ -108,7 +109,7 @@ export class ArticleService {
 
     for (const item of feed.entries) {
       try {
-        const published = convertToISOString(item.published)
+        const published = await convertToISOString(item.published)
         await this.addArticle(item.link, websiteId, websiteUrl, item.title, item.description, published, author, token);
       } catch {
         this.logger.error(`Add article ${item.title} of url ${item.link} failed`)
