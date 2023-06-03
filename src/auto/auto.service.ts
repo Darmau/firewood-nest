@@ -102,17 +102,4 @@ export class AutoService {
     await todayStatistic.save();
     return this.logger.log('Update statistics success');
   }
-
-  // 一次性任务。为每个website增加一个isDead字段，并设置为false
-  @Cron('0 0 22 * * *')
-  async addIsDead() {
-    try {
-      // 更新所有网站文档，为它们添加 isDead 字段并设置值为 false
-      await this.websiteModel.updateMany({}, { $set: { isDead: false } });
-      this.logger.log('Add isDead success');
-    } catch (error) {
-      // 如果出现错误，记录错误信息
-      this.logger.error('Error adding isDead field:', error);
-    }
-  }
 }
