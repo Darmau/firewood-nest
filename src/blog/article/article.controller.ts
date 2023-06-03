@@ -85,4 +85,11 @@ export class ArticleController {
   async featureArticle(@Query('id') id: string) {
     return await this.articleService.setFeaturedArticle(id);
   }
+
+  // /article/edit?id=&topic= PUT
+  @UseGuards(AuthGuard)
+  @Put('edit')
+  async editArticleTopic(@Query('id') id: string, @Query('topic') topic: string) {
+    return await this.articleService.editArticleTopic(id, topic);
+  }
 }

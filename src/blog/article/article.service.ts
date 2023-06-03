@@ -164,4 +164,11 @@ export class ArticleService {
       default: return await this.articleModel.countDocuments().exec();
     }
   }
+
+  // 修改文章分类
+  async editArticleTopic(id: string, topic: string): Promise<Article> {
+    const article = await this.articleModel.findById(id).exec();
+    article.topic = topic;
+    return await article.save();
+  }
 }
