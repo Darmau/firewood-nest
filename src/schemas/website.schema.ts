@@ -13,6 +13,12 @@ export class Website {
   })
   url: string;
 
+  @Prop({
+    required: true,
+    default: false
+  })
+  isDead: boolean;
+
   @Prop()
   rss: string;
 
