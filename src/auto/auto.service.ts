@@ -102,4 +102,14 @@ export class AutoService {
     await todayStatistic.save();
     return this.logger.log('Update statistics success');
   }
+
+  // 一次性任务。为每个website增加一个isDead字段，并设置为false
+  @Cron('0 0 22 * * *')
+  async addIsDead() {
+    const websites = await this.websiteModel.find();
+    for (const website of websites) {
+      await this.websiteModel.findByIdAndUpdate(website._id, { isDead: false });
+    }
+    return this.logger.log('Add isDead success');
+  }
 }
