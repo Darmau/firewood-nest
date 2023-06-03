@@ -106,10 +106,13 @@ export class AutoService {
   // 一次性任务。为每个website增加一个isDead字段，并设置为false
   @Cron('0 0 22 * * *')
   async addIsDead() {
-    const websites = await this.websiteModel.find();
-    for (const website of websites) {
-      await this.websiteModel.findByIdAndUpdate(website._id, { isDead: false });
+    try {
+      // 更新所有网站文档，为它们添加 isDead 字段并设置值为 false
+      await this.websiteModel.updateMany({}, { $set: { isDead: false } });
+      this.logger.log('Add isDead success');
+    } catch (error) {
+      // 如果出现错误，记录错误信息
+      this.logger.error('Error adding isDead field:', error);
     }
-    return this.logger.log('Add isDead success');
   }
 }
