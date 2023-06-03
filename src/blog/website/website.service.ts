@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as cheerio from 'cheerio';
 import { Model } from 'mongoose';
+import replaceDomain from 'src/common/replace-domain';
 import { Article } from 'src/schemas/article.schema';
 import { Website } from 'src/schemas/website.schema';
 
@@ -42,7 +43,6 @@ export class WebsiteService {
   // 管理员修改网站信息
   async updateWebsite(id: string, url?: string, rss?: string, name?: string, description?: string, cover?: string): Promise<Website> {
     const website = await this.websiteModel.findById(id).exec();
-    if (url) { website.url = url; }
     if (rss) { website.rss = rss; }
     if (description) { website.description = description; }
     if (cover) { website.cover = cover; }
@@ -56,6 +56,20 @@ export class WebsiteService {
           { author: name },
         );
       };
+    }
+    // 修改文章中的url
+    if (url) {
+      website.url = url;
+      const articles = await this.articleModel.find({ website_id: id }).exec();
+      for (const article of articles) {
+        await this.articleModel.findByIdAndUpdate(
+          article._id,
+          {
+            url: replaceDomain(article.url, url),
+            website: url,
+          }
+        );
+      }
     }
     const newSite = await website.save();
     return newSite;
