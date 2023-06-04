@@ -22,7 +22,7 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-This repository contains the backend for the Firewood.news project, a powerful and efficient news and blog management system. The backend is developed using Nest.js and is paired with MongoDB as the database. It can be easily deployed and run with Docker Compose.
+This repository contains the backend for the [积薪](https://firewood.news) project, an independent blog navigation station. The backend is developed using Nest.js and is paired with MongoDB as the database. It can be easily deployed and run with Docker Compose.
 
 ## Features
 The main purpose of this backend is to provide a variety of APIs for the Firewood.news website, including:
