@@ -14,5 +14,8 @@ export default function convertDate(input) {
   const date = new Date(decodedString);
   date.setUTCHours(date.getUTCHours() - 8);
 
-  return date.toISOString();
+  const isoDateString = date.toISOString();
+  const isoDate = new Date(isoDateString);
+
+  return isoDate;
 }
