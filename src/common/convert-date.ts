@@ -11,5 +11,8 @@ export default function convertDate(input) {
     return htmlEntities[match];
   });
 
-  return new Date(decodedString)
+  const date = new Date(decodedString);
+  date.setUTCHours(date.getUTCHours() - 8);
+
+  return date.toISOString();
 }
