@@ -11,8 +11,11 @@ export default function convertDate(input) {
     return htmlEntities[match];
   });
 
-  const date = new Date(decodedString);
-  date.setUTCHours(date.getUTCHours() - 8);
-
+  let date = new Date(decodedString);
+  
+  // 如果日期晚于当前时间，则将date设置为当前日期
+  if (date > new Date()) {
+    date = new Date();
+  }
   return date;
 }
