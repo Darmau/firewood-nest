@@ -11,7 +11,8 @@ export default function convertDate(input) {
     return htmlEntities[match];
   });
 
-  let date = new Date(decodedString);
+  let dateString = new Date(decodedString).toLocaleString('en-US', { timeZone: 'Asia/Shanghai' });
+  let date = new Date(dateString);
   
   // 如果日期晚于当前时间，则将date设置为当前日期
   if (date > new Date()) {
