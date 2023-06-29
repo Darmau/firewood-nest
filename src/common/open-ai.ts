@@ -1,7 +1,6 @@
 export default async function AIProcess(content: string) {
   const TOKEN = process.env.WORKERS_TOKEN;
   const API = process.env.WORKERS_API;
-  console.log("ai处理")
   try {
     const articleResponse = await fetch(API, {
       method: 'POST',
