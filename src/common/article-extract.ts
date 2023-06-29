@@ -19,14 +19,15 @@ export default async function getArticleInfo(url: string, website: string) {
         const contentString = await $.text();
 
         const articleData = await AIProcess(contentString);
+        const articleJson = await JSON.parse(articleData)
         // 获取文章摘要
-        abstract = await articleData.abstract;
+        abstract = await articleJson.abstract;
 
         // 获取文章标签
-        tags = await articleData.tags;
+        tags = await articleJson.tags;
 
         // 获取文章分类
-        topic = await getEnglishTopic(articleData.category);
+        topic = await getEnglishTopic(articleJson.category);
       }
 
     } catch (error) {
