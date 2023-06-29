@@ -4,7 +4,6 @@ import { Cron } from '@nestjs/schedule';
 import { Model } from 'mongoose';
 import { ArticleService } from 'src/blog/article/article.service';
 import { WebsiteService } from 'src/blog/website/website.service';
-import getBaiduToken from 'src/common/get-baidu-token';
 import { Article } from 'src/schemas/article.schema';
 import { Statistic } from 'src/schemas/statistic.schema';
 import { Website } from 'src/schemas/website.schema';
@@ -20,11 +19,9 @@ export class AutoService {
   ) { }
   private readonly logger = new Logger(AutoService.name);
 
-  // 获取所有website，分别将url传入updateArticlesByWebsite方法, 每4小时执行一次
+  // 获取所有website，分别将url传入updateArticlesByWebsite方法, 每2小时执行一次
   @Cron('0 0 0-16/2 * * *')
   async updateArticle() {
-    // 获取百度API token并传入，减少重复获取token的次数
-    const token = await getBaiduToken();
 
     try {
       const websites = await this.websiteModel.find();
@@ -33,7 +30,7 @@ export class AutoService {
       for (const website of websites) {
         try {
           this.logger.log('Start update articles at:' + website.url);
-          await this.articleService.updateArticlesByWebsite(website.url, token);
+          await this.articleService.updateArticlesByWebsite(website.url);
           await this.websiteService.updatePageView(website.url);
         } catch (error) {
           this.logger.error('Update websites failed at:' + website.url + '\n' + error.message);

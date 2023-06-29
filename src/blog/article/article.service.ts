@@ -41,14 +41,14 @@ export class ArticleService {
   }
 
   // 新增文章
-  async addArticle(url: string, website_id: mongoose.Types.ObjectId, website: string, title: string, description: string, publish_date: Date, author: string, token): Promise<Article | String> {
+  async addArticle(url: string, website_id: mongoose.Types.ObjectId, website: string, title: string, description: string, publish_date: Date, author: string): Promise<Article | String> {
     // 查询是否已存在该 article
     const existArticle = await this.articleModel.findOne({ url: url }).exec();
     if (existArticle) {
       return existArticle;
     }
 
-    const article = await getArticleInfo(url, website, token);
+    const article = await getArticleInfo(url, website);
 
     const newArticle = await new this.articleModel({
       website_id: website_id,
@@ -76,7 +76,7 @@ export class ArticleService {
   }
 
   // 根据网站rss，获取网站最新文章，并传入addArticle方法
-  async updateArticlesByWebsite(url: string, token: string): Promise<any> {
+  async updateArticlesByWebsite(url: string): Promise<any> {
 
     const website = await this.websiteModel.findOne({ url: url }).exec();
 
@@ -100,7 +100,7 @@ export class ArticleService {
       try {
         // 转换日期为统一的ISO格式
         const publish_date = convertDate(item.published)
-        await this.addArticle(item.link, websiteId, websiteUrl, item.title, item.description, publish_date, author, token);
+        await this.addArticle(item.link, websiteId, websiteUrl, item.title, item.description, publish_date, author);
       } catch {
         this.logger.error(`Add article ${item.title} of url ${item.link} failed`)
         continue;

@@ -1,12 +1,10 @@
-import { extract } from '@extractus/article-extractor'
+import { extract } from '@extractus/article-extractor';
 import * as cheerio from 'cheerio';
-import getAbstract from './get-abstract';
-import getTags from './get-tags';
-import getTopic from './get-topic';
 import cloudflareImage from './cloudflare-image';
+import AIProcess from './open-ai';
 
 // 本函数用于从文章中提取出相应信息，包括标题、描述、内容、图片等。
-export default async function getArticleInfo(url: string, website: string, token: string) {
+export default async function getArticleInfo(url: string, website: string) {
   let article;
   let retries = 0;
   let images = null;
@@ -19,14 +17,16 @@ export default async function getArticleInfo(url: string, website: string, token
       if (article.content) {
         const $ = await cheerio.load(article.content);
         const contentString = await $.text();
+
+        const articleData = await AIProcess(contentString);
         // 获取文章摘要
-        abstract = await getAbstract(article.title, contentString, token);
+        abstract = await articleData.abstract;
 
         // 获取文章标签
-        tags = await getTags(article.title, contentString, token);
+        tags = await articleData.tags;
 
         // 获取文章分类
-        topic = await getTopic(article.title, contentString, token);
+        topic = await getEnglishTopic(articleData.category);
       }
 
     } catch (error) {
@@ -65,4 +65,28 @@ export default async function getArticleInfo(url: string, website: string, token
     tags: tags,
     topic: topic,
   };
+}
+
+// 用于将中文的分类转换成英文
+function getEnglishTopic(chinese) {
+  const topicList = new Map([
+    ['技术', 'tech'],
+    ['编程', 'code'],
+    ['社会', 'society'],
+    ['情感', 'emotion'],
+    ['旅行', 'travel'],
+    ['日记', 'diary'],
+    ['生活', 'life'],
+    ['职场', 'career'],
+    ['人文社科', 'culture'],
+    ['政治', 'politics'],
+    ['教育', 'education'],
+    ['综合', 'others'],
+  ]);
+
+  if(!topicList.has(chinese)) {
+    return 'others'
+  }
+
+  return topicList.get(chinese);
 }

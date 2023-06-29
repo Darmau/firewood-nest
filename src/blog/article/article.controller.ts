@@ -62,7 +62,6 @@ export class ArticleController {
       addArticleDto.description,
       addArticleDto.publish_date,
       addArticleDto.author,
-      addArticleDto.token
     );
   }
 
