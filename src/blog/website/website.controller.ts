@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { WebsiteService } from './website.service';
-import { AddWebsiteDto } from 'src/dto/addWebsite.dto';
-import { UpdateWebsiteDto } from 'src/dto/updateWebsite.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AddWebsiteDto } from '../../dto/addWebsite.dto';
+import { UpdateWebsiteDto } from '../../dto/updateWebsite.dto';
+import { AuthGuard } from '../../auth/auth.guard';
 
 @Controller('website')
 export class WebsiteController {

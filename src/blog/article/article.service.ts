@@ -2,10 +2,10 @@ import { extract } from '@extractus/feed-extractor';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
-import getArticleInfo from 'src/common/article-extract';
-import convertDate from 'src/common/convert-date';
-import { Article } from 'src/schemas/article.schema';
-import { Website } from 'src/schemas/website.schema';
+import getArticleInfo from '../../common/article-extract';
+import convertDate from '../../common/convert-date';
+import { Article } from '../../schemas/article.schema';
+import { Website } from '../../schemas/website.schema';
 
 @Injectable()
 export class ArticleService {
@@ -93,7 +93,7 @@ export class ArticleService {
     }
 
     // 从feed中提取文章信息，并找到content和summary
-    let feed = await extract(rss, { useISODateFormat: false });
+    const feed = await extract(rss, { useISODateFormat: false });
     const limitedEntries = await feed.entries.slice(0, 50)
 
     for (const item of limitedEntries) {

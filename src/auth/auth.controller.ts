@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
-import { SignDto } from 'src/dto/sign.dto';
+import { SignDto } from '../dto/sign.dto';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 

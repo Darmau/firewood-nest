@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { AddArticleDto } from 'src/dto/addArticle.dto';
+import { AuthGuard } from '../../auth/auth.guard';
+import { AddArticleDto } from '../../dto/addArticle.dto';
 import { ArticleService } from './article.service';
-import { GetArticleCountDto } from 'src/dto/getArticleCount.dto';
+import { GetArticleCountDto } from '../../dto/getArticleCount.dto';
 
 @Controller('article')
 export class ArticleController {

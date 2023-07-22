@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from 'src/schemas/user.schema';
+import { User } from '../schemas/user.schema';
 const bcrypt = require('bcrypt');
 
 @Injectable()

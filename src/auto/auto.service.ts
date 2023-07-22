@@ -2,11 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Cron } from '@nestjs/schedule';
 import { Model } from 'mongoose';
-import { ArticleService } from 'src/blog/article/article.service';
-import { WebsiteService } from 'src/blog/website/website.service';
-import { Article } from 'src/schemas/article.schema';
-import { Statistic } from 'src/schemas/statistic.schema';
-import { Website } from 'src/schemas/website.schema';
+import { ArticleService } from '../blog/article/article.service';
+import { WebsiteService } from '../blog/website/website.service';
+import { Article } from '../schemas/article.schema';
+import { Statistic } from '../schemas/statistic.schema';
+import { Website } from '../schemas/website.schema';
 
 @Injectable()
 export class AutoService {
