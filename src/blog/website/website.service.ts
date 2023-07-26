@@ -143,7 +143,7 @@ export class WebsiteService {
     const lastPublish = await articles[0].publish_date;
 
     // 更新websiteModel中的page_view
-    await this.websiteModel.findByIdAndUpdate(websiteId, { page_view: pageView, last_publish: lastPublish });
+    return await this.websiteModel.findByIdAndUpdate(websiteId, { page_view: pageView, last_publish: lastPublish });
   }
 
   // 获取网站总数
