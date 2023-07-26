@@ -31,7 +31,7 @@ export class AutoService {
         try {
           this.logger.log('Start update articles at:' + website.url);
           await this.articleService.updateArticlesByWebsite(website.url);
-          await this.websiteService.updatePageView(website.url);
+          await this.websiteService.updatePageView(website._id.toString());
         } catch (error) {
           this.logger.error('Update websites failed at:' + website.url + '\n' + error.message);
           await this.websiteModel.findOneAndUpdate({ url: website.url }, { crawl_error: website.crawl_error + 1 });

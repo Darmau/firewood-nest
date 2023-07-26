@@ -125,13 +125,9 @@ export class WebsiteService {
   }
 
   // 遍历网站下的文章，获取page_view，计算总访问量
-  async updatePageView(url: string): Promise<void> {
-    // 根据网站url在websiteModel中查找相应的id
-    const website = await this.websiteModel.findOne({ url: url }).exec();
-    const websiteId = await website._id;
-
+  async updatePageView(id: string): Promise<Website> {
     // 利用websiteId去article中查找website_id为websiteId的所有文章，并按发布时间倒序排列
-    const articles = await this.articleModel.find({ website_id: websiteId }).sort({ publish_date: -1 }).exec();
+    const articles = await this.articleModel.find({ website_id: id }).sort({ publish_date: -1 });
 
     // 计算所有文章的page_view总和
     let pageView = 0;
@@ -140,10 +136,10 @@ export class WebsiteService {
     }
 
     // 顺便更新最新文章发布时间
-    const lastPublish = await articles[0].publish_date;
+    const lastPublish = articles[0].publish_date;
 
     // 更新websiteModel中的page_view
-    return await this.websiteModel.findByIdAndUpdate(websiteId, { page_view: pageView, last_publish: lastPublish });
+    return await this.websiteModel.findByIdAndUpdate(id, { page_view: pageView, last_publish: lastPublish }).exec();
   }
 
   // 获取网站总数
