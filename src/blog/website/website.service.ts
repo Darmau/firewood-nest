@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as cheerio from 'cheerio';
 import { Model } from 'mongoose';
@@ -12,6 +12,7 @@ export class WebsiteService {
     @InjectModel('Website') private websiteModel: Model<Website>,
     @InjectModel('Article') private articleModel: Model<Article>,
   ) { }
+  private readonly logger = new Logger(WebsiteService.name);
 
   // 根据网站总访问量，倒序排列，获取所有网站
   async getWebsiteByPageView(page: number, limit: number): Promise<Website[]> {
@@ -130,10 +131,9 @@ export class WebsiteService {
     const articles = await this.articleModel.find({ website_id: id }).sort({ publish_date: -1 });
 
     // 计算所有文章的page_view总和
-    let pageView = 0;
-    for (const article of articles) {
-      pageView += article.page_view;
-    }
+    const pageView = articles.reduce((totalPageView, article) => totalPageView + article.page_view, 0);
+
+    this.logger.log(`Update page_view of website ${id} to ${pageView}`);
 
     // 顺便更新最新文章发布时间
     const lastPublish = articles[0].publish_date;
