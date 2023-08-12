@@ -3,16 +3,16 @@ import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { UsersModule } from "../users/users.module";
 import { JwtModule } from "@nestjs/jwt";
-import { jwtConstants } from "./constants";
 import { MongooseModule } from "@nestjs/mongoose";
 import { UserSchema } from "../schemas/user.schema";
+import { jwtConstants } from "../common/constants";
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: "User", schema: UserSchema }]),
     JwtModule.register({
       global: true,
-      secret: jwtConstants.secret,
+      secret: jwtConstants,
       signOptions: { expiresIn: "14d" },
     }),
     UsersModule,
