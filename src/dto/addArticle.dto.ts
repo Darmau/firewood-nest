@@ -22,6 +22,6 @@ export class AddArticleDto {
   publish_date: Date;
 
   cover: string;
-  
+
   content: string;
 }

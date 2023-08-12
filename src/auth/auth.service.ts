@@ -1,28 +1,27 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { User } from '../schemas/user.schema';
-const bcrypt = require('bcrypt');
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { User } from "../schemas/user.schema";
+const bcrypt = require("bcrypt");
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
-    @InjectModel('User') private userModel: Model<User>,
-  ) { }
+    @InjectModel("User") private userModel: Model<User>,
+  ) {}
 
   async signIn(username: string, password: string) {
     const user = await this.userModel.findOne({ username: username }).exec();
     const hashPassword = await user.password;
     const isMatch = await bcrypt.compare(password, hashPassword);
-    if (!isMatch) throw new UnauthorizedException('Invalid password')
+    if (!isMatch) throw new UnauthorizedException("Invalid password");
     const payLoad = { username: user.username, sub: user.userId };
     return {
       access_token: this.jwtService.sign(payLoad),
     };
   }
-
 
   async signUp(username: string, pass: string) {
     const admin = await this.userModel.find();
@@ -30,7 +29,7 @@ export class AuthService {
       const error = {
         message: "Admin already exists",
         hasAdmin: true,
-      }
+      };
       throw new UnauthorizedException(error);
     }
     try {
@@ -46,14 +45,13 @@ export class AuthService {
           userId: 1,
         });
         await newUser.save();
-      })
+      });
       return {
         message: "success",
-      }
-    }
-    catch (err) {
+      };
+    } catch (err) {
       console.error(err);
-      throw new UnauthorizedException('Register failed');
+      throw new UnauthorizedException("Register failed");
     }
   }
 
@@ -61,6 +59,6 @@ export class AuthService {
   async validate() {
     return {
       message: "success",
-    }
+    };
   }
 }

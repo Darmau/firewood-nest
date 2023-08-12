@@ -16,7 +16,7 @@ export class User {
 
   // role分为admin和visitor两种
   @Prop({
-    enum: ['admin', 'visitor'],
+    enum: ["admin", "visitor"],
   })
   role: string;
 }

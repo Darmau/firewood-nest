@@ -15,7 +15,7 @@ export class Website {
 
   @Prop({
     required: true,
-    default: false
+    default: false,
   })
   isDead: boolean;
 
@@ -28,12 +28,12 @@ export class Website {
   name: string;
 
   @Prop({
-    default: '',
+    default: "",
   })
   description: string;
 
   @Prop({
-    default: '',
+    default: "",
     match: /^http(s)?:\/\/.+/,
   })
   cover: string;
@@ -48,7 +48,7 @@ export class Website {
   })
   page_view: number;
 
-  @Prop({ default: Date.now, })
+  @Prop({ default: Date.now })
   last_publish: Date;
 
   @Prop({

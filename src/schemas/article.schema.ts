@@ -8,7 +8,7 @@ export type ArticleDocument = HydratedDocument<Article>;
 export class Article {
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Website',
+    ref: "Website",
     required: true,
   })
   website_id: Website;
@@ -30,7 +30,7 @@ export class Article {
   @Prop({ required: true })
   title: string;
 
-  @Prop({ default: '' })
+  @Prop({ default: "" })
   description: string;
 
   @Prop()

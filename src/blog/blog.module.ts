@@ -1,16 +1,21 @@
-import { Module } from '@nestjs/common';
-import { WebsiteController } from './website/website.controller';
-import { ArticleController } from './article/article.controller';
-import { WebsiteService } from './website/website.service';
-import { ArticleService } from './article/article.service';
-import { MongooseModule } from '@nestjs/mongoose';
-import { WebsiteSchema } from '../schemas/website.schema';
-import { ArticleSchema } from '../schemas/article.schema';
+import { Module } from "@nestjs/common";
+import { WebsiteController } from "./website/website.controller";
+import { ArticleController } from "./article/article.controller";
+import { WebsiteService } from "./website/website.service";
+import { ArticleService } from "./article/article.service";
+import { MongooseModule } from "@nestjs/mongoose";
+import { WebsiteSchema } from "../schemas/website.schema";
+import { ArticleSchema } from "../schemas/article.schema";
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'Website', schema: WebsiteSchema }, { name: 'Article', schema: ArticleSchema }])],
+  imports: [
+    MongooseModule.forFeature([
+      { name: "Website", schema: WebsiteSchema },
+      { name: "Article", schema: ArticleSchema },
+    ]),
+  ],
   controllers: [WebsiteController, ArticleController],
   providers: [WebsiteService, ArticleService],
-  exports: [WebsiteService, ArticleService]
+  exports: [WebsiteService, ArticleService],
 })
-export class BlogModule { }
+export class BlogModule {}

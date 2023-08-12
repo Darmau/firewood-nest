@@ -6,7 +6,7 @@ export class UpdateWebsiteDto {
 
   @IsUrl()
   rss: string;
-  
+
   name: string;
   description: string;
 
