@@ -11,10 +11,13 @@ import { AutoModule } from "./auto/auto.module";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: [".env.development", ".env.production"],
+    }),
     MongooseModule.forRoot(process.env.MONGODB),
-    ScheduleModule.forRoot(),
     AuthModule,
+    ScheduleModule.forRoot(),
     UsersModule,
     BlogModule,
     AutoModule,
