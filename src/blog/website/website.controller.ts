@@ -97,9 +97,9 @@ export class WebsiteController {
     return await this.websiteService.getLastYearArticleCount(id);
   }
 
-  // 随机返回n个网站
+  // 随机返回5个网站
   @Get("random")
-  async getRandomWebsite(@Query("limit") limit: number = 5): Promise<Website[]> {
-    return await this.websiteService.getRandomWebsite(limit);
+  async getRandomWebsite(): Promise<Website[]> {
+    return await this.websiteService.getRandomWebsite();
   }
 }

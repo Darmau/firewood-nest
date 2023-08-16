@@ -123,7 +123,13 @@ export class ArticleController {
   // /article/hotest?limit=10
   // 获取一周范围内最热门的文章
   @Get("hotest")
-  async getHotestArticle(@Query("limit") limit: number) {
+  async getHotestArticle(@Query("limit") limit: number = 10) {
     return await this.articleService.getHotestArticle(limit);
+  }
+
+  // /article/random
+  @Get("random")
+  async getRandomArticle() {
+    return await this.articleService.getRandomArticle();
   }
 }
