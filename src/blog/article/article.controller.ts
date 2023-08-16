@@ -119,4 +119,11 @@ export class ArticleController {
   ) {
     return await this.articleService.editArticleTopic(id, topic);
   }
+
+  // /article/hotest?limit=10
+  // 获取一周范围内最热门的文章
+  @Get("hotest")
+  async getHotestArticle(@Query("limit") limit: number) {
+    return await this.articleService.getHotestArticle(limit);
+  }
 }

@@ -48,6 +48,17 @@ export class ArticleService {
       .exec();
   }
 
+  // 获取一周内浏览量最高的文章
+  async getHotestArticle(limit:number = 10): Promise<Article[]> {
+    const date = new Date();
+    date.setDate(date.getDate() - 7);
+    return await this.articleModel
+      .find({ publish_date: { $gte: date }, isBlocked: { $ne: true } })
+      .sort({ page_view: -1 })
+      .limit(limit)
+      .exec();
+  }
+
   // 获得指定分类的最新文章
   async getArticleByTopic(
     topic: string,
