@@ -13,10 +13,15 @@ import { WebsiteService } from "./website.service";
 import { AddWebsiteDto } from "../../dto/addWebsite.dto";
 import { UpdateWebsiteDto } from "../../dto/updateWebsite.dto";
 import { AuthGuard } from "../../auth/auth.guard";
+import { ArticleService } from "../article/article.service";
+import {Website} from "../../schemas/website.schema";
 
 @Controller("website")
 export class WebsiteController {
-  constructor(private websiteService: WebsiteService) {}
+  constructor(
+    private websiteService: WebsiteService,
+    private articleService: ArticleService,
+  ) {}
 
   // /website/most-view?page=1&limit=10
   @Get("most-view")
@@ -90,5 +95,11 @@ export class WebsiteController {
   @Get("last-year")
   async getLastYearArticleCount(@Query("id") id: string) {
     return await this.websiteService.getLastYearArticleCount(id);
+  }
+
+  // 随机返回n个网站
+  @Get("random")
+  async getRandomWebsite(@Query("limit") limit: number = 5): Promise<Website[]> {
+    return await this.websiteService.getRandomWebsite(limit);
   }
 }
