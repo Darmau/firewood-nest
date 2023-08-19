@@ -3,7 +3,7 @@ import { JwtService } from "@nestjs/jwt";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { User } from "../schemas/user.schema";
-const bcrypt = require("bcrypt");
+import bcrypt from "bcrypt";
 
 @Injectable()
 export class AuthService {
@@ -14,7 +14,7 @@ export class AuthService {
 
   async signIn(username: string, password: string) {
     const user = await this.userModel.findOne({ username: username }).exec();
-    const hashPassword = await user.password;
+    const hashPassword = user.password;
     const isMatch = await bcrypt.compare(password, hashPassword);
     if (!isMatch) throw new UnauthorizedException("Invalid password");
     const payLoad = { username: user.username, sub: user.userId };
@@ -39,7 +39,7 @@ export class AuthService {
           console.error(err);
           throw new UnauthorizedException();
         }
-        const newUser = await new this.userModel({
+        const newUser = new this.userModel({
           username: username,
           password: hash,
           userId: 1,
