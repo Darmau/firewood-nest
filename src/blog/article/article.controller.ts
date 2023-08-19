@@ -1,26 +1,19 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Put,
-  Query,
-  UseGuards,
-} from "@nestjs/common";
-import { AuthGuard } from "../../auth/auth.guard";
-import { AddArticleDto } from "../../dto/addArticle.dto";
-import { ArticleService } from "./article.service";
-import { GetArticleCountDto } from "../../dto/getArticleCount.dto";
+import {Body, Controller, Get, Post, Put, Query, UseGuards,} from "@nestjs/common";
+import {AuthGuard} from "../../auth/auth.guard";
+import {AddArticleDto} from "../../dto/addArticle.dto";
+import {ArticleService} from "./article.service";
+import {GetArticleCountDto} from "../../dto/getArticleCount.dto";
 
 @Controller("article")
 export class ArticleController {
-  constructor(private articleService: ArticleService) {}
+  constructor(private articleService: ArticleService) {
+  }
 
   // /article/latest?page=1&limit=10
   @Get("latest")
   async getAllUnblockedArticle(
-    @Query("page") page: number,
-    @Query("limit") limit: number,
+      @Query("page") page: number,
+      @Query("limit") limit: number,
   ) {
     return await this.articleService.getAllUnblockedArticle(page, limit);
   }
@@ -28,8 +21,8 @@ export class ArticleController {
   // /article/all?page=1&limit=10
   @Get("all")
   async getAllArticle(
-    @Query("page") page: number,
-    @Query("limit") limit: number,
+      @Query("page") page: number,
+      @Query("limit") limit: number,
   ) {
     return await this.articleService.getAllArticle(page, limit);
   }
@@ -37,8 +30,8 @@ export class ArticleController {
   // /article/featured?page=&limit=5
   @Get("featured")
   async getArticleByRecommend(
-    @Query("page") page: number,
-    @Query("limit") limit: number,
+      @Query("page") page: number,
+      @Query("limit") limit: number,
   ) {
     return await this.articleService.getArticleByRecommend(page, limit);
   }
@@ -47,9 +40,9 @@ export class ArticleController {
   // /article/topic?topic=&page=1&limit=6
   @Get("topic")
   async getArticleByTopic(
-    @Query("topic") topic: string,
-    @Query("page") page: number,
-    @Query("limit") limit: number,
+      @Query("topic") topic: string,
+      @Query("page") page: number,
+      @Query("limit") limit: number,
   ) {
     return await this.articleService.getArticleByTopic(topic, page, limit);
   }
@@ -58,19 +51,19 @@ export class ArticleController {
   @Post("count")
   async getArticleCount(@Body() getArticleCount: GetArticleCountDto) {
     return await this.articleService.getArticleCount(
-      getArticleCount.type,
-      getArticleCount.topic,
-      getArticleCount.startAt,
-      getArticleCount.endAt,
+        getArticleCount.type,
+        getArticleCount.topic,
+        getArticleCount.startAt,
+        getArticleCount.endAt,
     );
   }
 
   // /article?website=https://darmau.design&page=1&limit=10
   @Get()
   async getArticleByBlog(
-    @Query("website") url: string,
-    @Query("page") page: number,
-    @Query("limit") limit: number,
+      @Query("website") url: string,
+      @Query("page") page: number,
+      @Query("limit") limit: number,
   ) {
     return await this.articleService.getArticleByBlog(url, page, limit);
   }
@@ -80,13 +73,13 @@ export class ArticleController {
   @Post("add")
   async addArticle(@Body() addArticleDto: AddArticleDto) {
     return await this.articleService.addArticle(
-      addArticleDto.url,
-      addArticleDto.website_id,
-      addArticleDto.website,
-      addArticleDto.title,
-      addArticleDto.description,
-      addArticleDto.publish_date,
-      addArticleDto.author,
+        addArticleDto.url,
+        addArticleDto.website_id,
+        addArticleDto.website,
+        addArticleDto.title,
+        addArticleDto.description,
+        addArticleDto.publish_date,
+        addArticleDto.author,
     );
   }
 
@@ -114,15 +107,15 @@ export class ArticleController {
   @UseGuards(AuthGuard)
   @Put("edit")
   async editArticleTopic(
-    @Query("id") id: string,
-    @Query("topic") topic: string,
+      @Query("id") id: string,
+      @Query("topic") topic: string,
   ) {
     return await this.articleService.editArticleTopic(id, topic);
   }
 
-  // /article/hotest?limit=10
+  // /article/hottest?limit=10
   // 获取一周范围内最热门的文章
-  @Get("hotest")
+  @Get("hottest")
   async getHotestArticle(@Query("limit") limit: number = 10) {
     return await this.articleService.getHotestArticle(limit);
   }
