@@ -115,7 +115,7 @@ export class ArticleService {
 
     const article = await getArticleInfo(url, website);
 
-    const newArticle = await new this.articleModel({
+    const newArticle = new this.articleModel({
       website_id: website_id,
       website: website,
       author: author,
