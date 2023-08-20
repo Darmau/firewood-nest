@@ -21,8 +21,8 @@ export class AutoService {
 
   private readonly logger = new Logger(AutoService.name);
 
-  // 获取所有website，分别将url传入updateArticlesByWebsite方法, 每2小时执行一次
-  @Cron("0 0 8-20/4 * * *")
+  // 获取所有website，分别将url传入updateArticlesByWebsite方法, 每4小时执行一次
+  @Cron("0 0 0-16/4 * * *")
   async updateArticle() {
     try {
       const websites = await this.websiteModel.find();
@@ -51,7 +51,7 @@ export class AutoService {
   }
 
   // 一个月进行一次的任务。遍历所有article，一次1000篇。检测是否可访问，不可访问的进行标记。
-  @Cron("0 0 3 * * *")
+  @Cron("0 0 19 * * *")
   async checkArticles() {
     // 获取当前日期
     const currentDate = new Date();
@@ -94,7 +94,7 @@ export class AutoService {
   }
 
   // 每天凌晨1点执行一次，计算网站和文章的数量，写入数据库
-  @Cron("0 0 1 * * *")
+  @Cron("0 0 17 * * *")
   async updateStatistics() {
     const date = new Date();
     const websitesCount = await this.websiteModel.estimatedDocumentCount();
