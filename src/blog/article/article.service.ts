@@ -131,7 +131,17 @@ export class ArticleService {
     });
 
     await newArticle.save();
+    // 读取网站的categories，如果文章的topic不在categories中，则将文章的topic添加到categories中
+    const websiteInfo = await this.websiteModel.findById(website_id).exec();
+    const categories = websiteInfo.categories;
+    if (categories.has(article.topic)) {
+      categories.set(article.topic, categories.get(article.topic) + 1);
+    } else {
+      categories.set(article.topic, 1);
+    }
+
     await this.websiteModel.findByIdAndUpdate(website_id, {
+      categories: categories,
       last_crawl: new Date(),
     });
     return newArticle;
