@@ -21,11 +21,6 @@ export class AutoService {
 
   private readonly logger = new Logger(AutoService.name);
 
-  @Cron("30 9 * * *")
-  async updateExistedTopics() {
-    return await this.websiteService.updateWebsiteCategories();
-  }
-
   // 获取所有website，分别将url传入updateArticlesByWebsite方法, 每4小时执行一次
   @Cron("0 0 0-16/4 * * *")
 
