@@ -202,10 +202,10 @@ export class WebsiteService {
     });
   }
 
-  // 从新添加的20个网站中随机抽取5个网站
+  // 随机抽取6个网站
   async getRandomWebsite(): Promise<Website[]> {
     return await this.websiteModel.aggregate([
-      {$sample: {size: 5}},
+      {$sample: {size: 6}},
     ]).exec();
   }
 }

@@ -1,33 +1,24 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  Query,
-  UseGuards,
-} from "@nestjs/common";
-import { WebsiteService } from "./website.service";
-import { AddWebsiteDto } from "../../dto/addWebsite.dto";
-import { UpdateWebsiteDto } from "../../dto/updateWebsite.dto";
-import { AuthGuard } from "../../auth/auth.guard";
-import { ArticleService } from "../article/article.service";
+import {Body, Controller, Delete, Get, Post, Put, Query, UseGuards,} from "@nestjs/common";
+import {WebsiteService} from "./website.service";
+import {AddWebsiteDto} from "../../dto/addWebsite.dto";
+import {UpdateWebsiteDto} from "../../dto/updateWebsite.dto";
+import {AuthGuard} from "../../auth/auth.guard";
+import {ArticleService} from "../article/article.service";
 import {Website} from "../../schemas/website.schema";
 
 @Controller("website")
 export class WebsiteController {
   constructor(
-    private websiteService: WebsiteService,
-    private articleService: ArticleService,
-  ) {}
+      private websiteService: WebsiteService,
+      private articleService: ArticleService,
+  ) {
+  }
 
   // /website/most-view?page=1&limit=10
   @Get("most-view")
   async getWebsiteByPageView(
-    @Query("page") page: number,
-    @Query("limit") limit: number,
+      @Query("page") page: number,
+      @Query("limit") limit: number,
   ) {
     return await this.websiteService.getWebsiteByPageView(page, limit);
   }
@@ -35,8 +26,8 @@ export class WebsiteController {
   // /website/latest?page=1&limit=10
   @Get("latest")
   async getWebsiteByLastPublish(
-    @Query("page") page: number,
-    @Query("limit") limit: number,
+      @Query("page") page: number,
+      @Query("limit") limit: number,
   ) {
     return await this.websiteService.getWebsiteByLastPublish(page, limit);
   }
@@ -59,8 +50,8 @@ export class WebsiteController {
   @Post("add")
   async addWebsite(@Body() addWebsiteDto: AddWebsiteDto) {
     return await this.websiteService.addWebsite(
-      addWebsiteDto.url,
-      addWebsiteDto.name,
+        addWebsiteDto.url,
+        addWebsiteDto.name,
     );
   }
 
@@ -69,16 +60,16 @@ export class WebsiteController {
   @UseGuards(AuthGuard)
   @Put()
   async updateWebsiteUrl(
-    @Query("id") id: string,
-    @Body() updateWebsiteDto: UpdateWebsiteDto,
+      @Query("id") id: string,
+      @Body() updateWebsiteDto: UpdateWebsiteDto,
   ) {
     return await this.websiteService.updateWebsite(
-      id,
-      updateWebsiteDto.url,
-      updateWebsiteDto.rss,
-      updateWebsiteDto.name,
-      updateWebsiteDto.description,
-      updateWebsiteDto.cover,
+        id,
+        updateWebsiteDto.url,
+        updateWebsiteDto.rss,
+        updateWebsiteDto.name,
+        updateWebsiteDto.description,
+        updateWebsiteDto.cover,
     );
   }
 
@@ -97,7 +88,7 @@ export class WebsiteController {
     return await this.websiteService.getLastYearArticleCount(id);
   }
 
-  // 随机返回5个网站
+  // 随机返回6个网站
   @Get("random")
   async getRandomWebsite(): Promise<Website[]> {
     return await this.websiteService.getRandomWebsite();

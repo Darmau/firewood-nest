@@ -1,4 +1,4 @@
-import { extract } from "@extractus/article-extractor";
+import {extract} from "@extractus/article-extractor";
 import * as cheerio from "cheerio";
 import cloudflareImage from "./cloudflare-image";
 import AIProcess from "./open-ai";
@@ -15,8 +15,8 @@ export default async function getArticleInfo(url: string, website: string) {
     try {
       article = await extract(url);
       if (article.content) {
-        const $ = await cheerio.load(article.content);
-        const contentString = await $.text();
+        const $ = cheerio.load(article.content);
+        const contentString = $.text();
 
         const articleData = await AIProcess(contentString);
         const articleJson = await JSON.parse(articleData);
@@ -27,7 +27,7 @@ export default async function getArticleInfo(url: string, website: string) {
         tags = await articleJson.tags;
 
         // 获取文章分类
-        topic = await getEnglishTopic(articleJson.category);
+        topic = getEnglishTopic(articleJson.category);
       }
     } catch (error) {
       console.error(`Error extracting article: ${error}`);

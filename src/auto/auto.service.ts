@@ -1,26 +1,28 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Cron } from "@nestjs/schedule";
-import { Model } from "mongoose";
-import { ArticleService } from "../blog/article/article.service";
-import { WebsiteService } from "../blog/website/website.service";
-import { Article } from "../schemas/article.schema";
-import { Statistic } from "../schemas/statistic.schema";
-import { Website } from "../schemas/website.schema";
+import {Injectable, Logger} from "@nestjs/common";
+import {InjectModel} from "@nestjs/mongoose";
+import {Cron} from "@nestjs/schedule";
+import {Model} from "mongoose";
+import {ArticleService} from "../blog/article/article.service";
+import {WebsiteService} from "../blog/website/website.service";
+import {Article} from "../schemas/article.schema";
+import {Statistic} from "../schemas/statistic.schema";
+import {Website} from "../schemas/website.schema";
 
 @Injectable()
 export class AutoService {
   constructor(
-    @InjectModel("Website") private websiteModel: Model<Website>,
-    @InjectModel("Article") private articleModel: Model<Article>,
-    @InjectModel("Statistic") private statisticModel: Model<Statistic>,
-    private articleService: ArticleService,
-    private websiteService: WebsiteService,
-  ) {}
+      @InjectModel("Website") private websiteModel: Model<Website>,
+      @InjectModel("Article") private articleModel: Model<Article>,
+      @InjectModel("Statistic") private statisticModel: Model<Statistic>,
+      private articleService: ArticleService,
+      private websiteService: WebsiteService,
+  ) {
+  }
+
   private readonly logger = new Logger(AutoService.name);
 
   // 获取所有website，分别将url传入updateArticlesByWebsite方法, 每2小时执行一次
-  @Cron("0 0 0-16/2 * * *")
+  @Cron("0 0 8-20/4 * * *")
   async updateArticle() {
     try {
       const websites = await this.websiteModel.find();
@@ -33,11 +35,11 @@ export class AutoService {
           await this.websiteService.updatePageView(website._id.toString());
         } catch (error) {
           this.logger.error(
-            "Update websites failed at:" + website.url + "\n" + error.message,
+              "Update websites failed at:" + website.url + "\n" + error.message,
           );
           await this.websiteModel.findOneAndUpdate(
-            { url: website.url },
-            { crawl_error: website.crawl_error + 1 },
+              {url: website.url},
+              {crawl_error: website.crawl_error + 1},
           );
           continue;
         }
@@ -49,7 +51,7 @@ export class AutoService {
   }
 
   // 一个月进行一次的任务。遍历所有article，一次1000篇。检测是否可访问，不可访问的进行标记。
-  @Cron("0 0 19 * * *")
+  @Cron("0 0 3 * * *")
   async checkArticles() {
     // 获取当前日期
     const currentDate = new Date();
@@ -60,10 +62,10 @@ export class AutoService {
 
     // 按publish_date从旧到新排序，设置每次查询的数量为1000，并根据偏移量查询
     const articles = await this.articleModel
-      .find()
-      .sort({ publish_date: 1 })
-      .limit(1000)
-      .skip(offset);
+        .find()
+        .sort({publish_date: 1})
+        .limit(1000)
+        .skip(offset);
 
     this.logger.log(`Start check articles from ${offset} to ${offset + 1000}`);
 
@@ -77,14 +79,14 @@ export class AutoService {
           article.crawl_error += 1;
           await article.save();
           this.logger.warn(
-            `Failed to access ${article.url}, count: ${article.crawl_error}`,
+              `Failed to access ${article.url}, count: ${article.crawl_error}`,
           );
         }
       } catch (error) {
         article.crawl_error += 1;
         await article.save();
         this.logger.error(
-          `Failed to access ${article.url}, count: ${article.crawl_error}`,
+            `Failed to access ${article.url}, count: ${article.crawl_error}`,
         );
         continue;
       }
@@ -92,16 +94,16 @@ export class AutoService {
   }
 
   // 每天凌晨1点执行一次，计算网站和文章的数量，写入数据库
-  @Cron("0 0 17 * * *")
+  @Cron("0 0 1 * * *")
   async updateStatistics() {
     const date = new Date();
     const websitesCount = await this.websiteModel.estimatedDocumentCount();
     const articlesCount = await this.articleModel.estimatedDocumentCount();
     const inaccessibleArticlesCount = await this.articleModel.countDocuments({
-      crawl_error: { $gte: 1 },
+      crawl_error: {$gte: 1},
     });
 
-    const todayStatistic = await new this.statisticModel({
+    const todayStatistic = new this.statisticModel({
       date: date,
       website_count: websitesCount,
       article_count: articlesCount,
