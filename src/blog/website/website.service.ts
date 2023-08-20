@@ -52,8 +52,7 @@ export class WebsiteService {
     const website = new this.websiteModel({url: url, name: name});
     await website.save();
     await this.updateWebsiteInfo(url);
-    const updatedSite = await this.websiteModel.findOne({url: url}).exec();
-    return updatedSite;
+    return await this.websiteModel.findOne({url: url}).exec();
   }
 
   // 管理员修改网站信息
@@ -96,8 +95,7 @@ export class WebsiteService {
         });
       }
     }
-    const newSite = await website.save();
-    return newSite;
+    return await website.save();
   }
 
   // 爬虫更新网站信息
@@ -207,5 +205,29 @@ export class WebsiteService {
     return await this.websiteModel.aggregate([
       {$sample: {size: 6}},
     ]).exec();
+  }
+
+  // 临时方法。遍历网站名下所有文章，读取topic，将其更新到website.categories中的Map里
+  async updateWebsiteCategories(): Promise<Boolean> {
+    const allWebsites = await this.websiteModel.find().exec();
+    for (const website of allWebsites) {
+      try {
+        const allArticles: Article[] = await this.articleModel.find({website_id: website._id}).exec();
+        const categories = new Map<string, number>();
+        for (const article of allArticles) {
+          const topic = article.topic || "未分类";
+          if (categories.has(topic)) {
+            categories.set(topic, categories.get(topic) + 1);
+          } else {
+            categories.set(topic, 1);
+          }
+        }
+        await this.websiteModel.findByIdAndUpdate(website._id, {categories: categories});
+        this.logger.debug(`Update categories of ${website.url}`);
+      } catch (error) {
+        this.logger.error(`Failed to update categories of ${website.url}`);
+      }
+    }
+    return true;
   }
 }
