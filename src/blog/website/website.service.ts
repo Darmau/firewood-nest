@@ -17,7 +17,7 @@ export class WebsiteService {
   private readonly logger = new Logger(WebsiteService.name);
 
   // 根据网站总访问量，倒序排列，获取所有网站
-  async getWebsiteByPageView(page: number, limit: number): Promise<Website[]> {
+  async getWebsiteByPageView(page: number = 1, limit: number = 15): Promise<Website[]> {
     return await this.websiteModel
         .find()
         .sort({page_view: -1})
@@ -28,8 +28,8 @@ export class WebsiteService {
 
   // 根据最近更新时间，倒序排列，获取所有网站，根据传入的page和limit分页
   async getWebsiteByLastPublish(
-      page: number,
-      limit: number,
+      page: number = 1,
+      limit: number = 15,
   ): Promise<Website[]> {
     return await this.websiteModel
         .find()
