@@ -52,8 +52,7 @@ export class WebsiteService {
     const website = new this.websiteModel({url: url, name: name});
     await website.save();
     await this.updateWebsiteInfo(url);
-    const updatedSite = await this.websiteModel.findOne({url: url}).exec();
-    return updatedSite;
+    return await this.websiteModel.findOne({url: url}).exec();
   }
 
   // 管理员修改网站信息
@@ -96,8 +95,7 @@ export class WebsiteService {
         });
       }
     }
-    const newSite = await website.save();
-    return newSite;
+    return await website.save();
   }
 
   // 爬虫更新网站信息
