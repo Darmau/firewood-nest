@@ -131,13 +131,16 @@ export class ArticleService {
     });
 
     await newArticle.save();
+
     // 读取网站的categories，如果文章的topic不在categories中，则将文章的topic添加到categories中
     const websiteInfo = await this.websiteModel.findById(website_id).exec();
     const categories = websiteInfo.categories;
-    if (categories.has(article.topic)) {
-      categories.set(article.topic, categories.get(article.topic) + 1);
+    // 将topic为null的分类设定为"未分类"
+    const articleTopic = article.topic ? article.topic : "未分类";
+    if (categories.has(articleTopic)) {
+      categories.set(articleTopic, categories.get(articleTopic) + 1);
     } else {
-      categories.set(article.topic, 1);
+      categories.set(articleTopic, 1);
     }
 
     await this.websiteModel.findByIdAndUpdate(website_id, {
