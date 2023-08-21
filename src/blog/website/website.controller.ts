@@ -53,6 +53,12 @@ export class WebsiteController {
     return await this.websiteService.getWebsiteById(id);
   }
 
+  // /website/blog?url=
+  @Get("blog")
+  async getWebsiteByUrl(@Query("url") url: string) {
+    return await this.websiteService.getWebsiteByUrl(url);
+  }
+
   // /website/add POST
   // 管理员增加网站
   @UseGuards(AuthGuard)
