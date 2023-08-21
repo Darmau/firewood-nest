@@ -1,4 +1,13 @@
-import {Body, Controller, Delete, Get, Post, Put, Query, UseGuards,} from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from "@nestjs/common";
 import {WebsiteService} from "./website.service";
 import {AddWebsiteDto} from "../../dto/addWebsite.dto";
 import {UpdateWebsiteDto} from "../../dto/updateWebsite.dto";
@@ -40,7 +49,7 @@ export class WebsiteController {
 
   // /website?id=
   @Get()
-  async getWebsiteByUrl(@Query("id") id: string) {
+  async getWebsiteById(@Query("id") id: string) {
     return await this.websiteService.getWebsiteById(id);
   }
 
