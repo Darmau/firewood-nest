@@ -56,7 +56,18 @@ export class WebsiteController {
   // /website/blog?url=
   @Get("blog")
   async getWebsiteByUrl(@Query("url") url: string) {
-    return await this.websiteService.getWebsiteByUrl(url);
+    // 将传入url之前添加协议名
+    const httpsPrefix = 'https://'
+    const httpPrefix = 'http://'
+    const httpsUrl = httpsPrefix.concat(url)
+    const httpUrl = httpPrefix.concat(url)
+    // 获取网站信息
+    const website = await this.websiteService.getWebsiteByUrl(httpsUrl);
+    if (website) {
+      return website;
+    } else {
+      return await this.websiteService.getWebsiteByUrl(httpUrl);
+    }
   }
 
   // /website/add POST
