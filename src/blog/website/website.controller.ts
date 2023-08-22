@@ -1,4 +1,13 @@
-import {Body, Controller, Delete, Get, Post, Put, Query, UseGuards,} from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from "@nestjs/common";
 import {WebsiteService} from "./website.service";
 import {AddWebsiteDto} from "../../dto/addWebsite.dto";
 import {UpdateWebsiteDto} from "../../dto/updateWebsite.dto";
@@ -40,8 +49,25 @@ export class WebsiteController {
 
   // /website?id=
   @Get()
-  async getWebsiteByUrl(@Query("id") id: string) {
+  async getWebsiteById(@Query("id") id: string) {
     return await this.websiteService.getWebsiteById(id);
+  }
+
+  // /website/blog?url=
+  @Get("blog")
+  async getWebsiteByUrl(@Query("url") url: string) {
+    // 将传入url之前添加协议名
+    const httpsPrefix = 'https://'
+    const httpPrefix = 'http://'
+    const httpsUrl = httpsPrefix.concat(url)
+    const httpUrl = httpPrefix.concat(url)
+    // 获取网站信息
+    const website = await this.websiteService.getWebsiteByUrl(httpsUrl);
+    if (website) {
+      return website;
+    } else {
+      return await this.websiteService.getWebsiteByUrl(httpUrl);
+    }
   }
 
   // /website/add POST

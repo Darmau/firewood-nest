@@ -1,4 +1,12 @@
-import {Body, Controller, Get, Post, Put, Query, UseGuards,} from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from "@nestjs/common";
 import {AuthGuard} from "../../auth/auth.guard";
 import {AddArticleDto} from "../../dto/addArticle.dto";
 import {ArticleService} from "./article.service";
@@ -66,6 +74,11 @@ export class ArticleController {
       @Query("limit") limit: number,
   ) {
     return await this.articleService.getArticleByBlog(url, page, limit);
+  }
+
+  @Get('article-count')
+  async getArticleCountByBlog(@Query('id') id: string) {
+    return await this.articleService.getArticleCountByBlog(id);
   }
 
   // /article/add POST
