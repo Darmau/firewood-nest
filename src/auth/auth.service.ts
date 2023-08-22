@@ -1,23 +1,24 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import { User } from "../schemas/user.schema";
+import {Injectable, UnauthorizedException} from "@nestjs/common";
+import {JwtService} from "@nestjs/jwt";
+import {InjectModel} from "@nestjs/mongoose";
+import {Model} from "mongoose";
+import {User} from "@/schemas/user.schema";
 import bcrypt from "bcrypt";
 
 @Injectable()
 export class AuthService {
   constructor(
-    private jwtService: JwtService,
-    @InjectModel("User") private userModel: Model<User>,
-  ) {}
+      private jwtService: JwtService,
+      @InjectModel("User") private userModel: Model<User>,
+  ) {
+  }
 
   async signIn(username: string, password: string) {
-    const user = await this.userModel.findOne({ username: username }).exec();
+    const user = await this.userModel.findOne({username: username}).exec();
     const hashPassword = user.password;
     const isMatch = await bcrypt.compare(password, hashPassword);
     if (!isMatch) throw new UnauthorizedException("Invalid password");
-    const payLoad = { username: user.username, sub: user.userId };
+    const payLoad = {username: user.username, sub: user.userId};
     return {
       access_token: this.jwtService.sign(payLoad),
     };

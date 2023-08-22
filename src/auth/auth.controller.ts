@@ -7,13 +7,15 @@ import {
   Post,
   UseGuards,
 } from "@nestjs/common";
-import { SignDto } from "../dto/sign.dto";
-import { AuthGuard } from "./auth.guard";
-import { AuthService } from "./auth.service";
+
+import {AuthGuard} from "@/auth/auth.guard";
+import {AuthService} from "@/auth/auth.service";
+import {SignDto} from "@/dto/sign.dto";
 
 @Controller("auth")
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) {
+  }
 
   // /auth/login POST
   @HttpCode(HttpStatus.OK)

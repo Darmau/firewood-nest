@@ -2,10 +2,10 @@ import {extract} from "@extractus/feed-extractor";
 import {Injectable, Logger} from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
 import mongoose, {Model} from "mongoose";
-import getArticleInfo from "../../common/article-extract";
-import convertDate from "../../common/convert-date";
-import {Article} from "../../schemas/article.schema";
-import {Website} from "../../schemas/website.schema";
+import getArticleInfo from "@/common/article-extract";
+import convertDate from "@/common/convert-date";
+import {Article} from "@/schemas/article.schema";
+import {Website} from "@/schemas/website.schema";
 
 @Injectable()
 export class ArticleService {

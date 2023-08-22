@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "ES2020",
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -11,14 +13,16 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"]
-    },
-    "incremental": true,
-    "skipLibCheck": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
-  }
+      "@/*": [
+        "src/*"
+      ]
+    }
+  },
+  "incremental": true,
+  "skipLibCheck": true,
+  "strictNullChecks": false,
+  "noImplicitAny": false,
+  "strictBindCallApply": false,
+  "forceConsistentCasingInFileNames": false,
+  "noFallthroughCasesInSwitch": false
 }
