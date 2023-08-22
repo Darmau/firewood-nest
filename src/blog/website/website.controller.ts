@@ -8,12 +8,12 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
-import {WebsiteService} from "./website.service";
-import {AddWebsiteDto} from "../../dto/addWebsite.dto";
-import {UpdateWebsiteDto} from "../../dto/updateWebsite.dto";
-import {AuthGuard} from "../../auth/auth.guard";
-import {ArticleService} from "../article/article.service";
-import {Website} from "../../schemas/website.schema";
+import {WebsiteService} from "@/blog/website/website.service";
+import {AddWebsiteDto} from "@/dto/addWebsite.dto";
+import {UpdateWebsiteDto} from "@/dto/updateWebsite.dto";
+import {AuthGuard} from "@/auth/auth.guard";
+import {ArticleService} from "@/blog/article/article.service";
+import {Website} from "@/schemas/website.schema";
 
 @Controller("website")
 export class WebsiteController {

@@ -2,9 +2,9 @@ import {HttpException, Injectable, Logger} from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
 import * as cheerio from "cheerio";
 import {Model} from "mongoose";
-import replaceDomain from "../../common/replace-domain";
-import {Article} from "../../schemas/article.schema";
-import {Website} from "../../schemas/website.schema";
+import replaceDomain from "@/common/replace-domain";
+import {Article} from "@/schemas/article.schema";
+import {Website} from "@/schemas/website.schema";
 
 @Injectable()
 export class WebsiteService {

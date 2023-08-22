@@ -7,10 +7,10 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
-import {AuthGuard} from "../../auth/auth.guard";
-import {AddArticleDto} from "../../dto/addArticle.dto";
-import {ArticleService} from "./article.service";
-import {GetArticleCountDto} from "../../dto/getArticleCount.dto";
+import {AuthGuard} from "@/auth/auth.guard";
+import {AddArticleDto} from "@/dto/addArticle.dto";
+import {ArticleService} from "@/blog/article/article.service";
+import {GetArticleCountDto} from "@/dto/getArticleCount.dto";
 
 @Controller("article")
 export class ArticleController {
