@@ -274,4 +274,11 @@ export class ArticleService {
     article.topic = topic;
     return await article.save();
   }
+
+  async getArticleCountByBlog(id: string): Promise<number> {
+    return await this.articleModel
+        .find({website_id: id})
+        .countDocuments()
+        .exec();
+  }
 }
