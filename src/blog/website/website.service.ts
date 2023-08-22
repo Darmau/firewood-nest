@@ -1,4 +1,4 @@
-import {Injectable, Logger} from "@nestjs/common";
+import {HttpException, Injectable, Logger} from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
 import * as cheerio from "cheerio";
 import {Model} from "mongoose";
@@ -42,6 +42,15 @@ export class WebsiteService {
   // 根据id获取指定网站信息
   async getWebsiteById(id: string): Promise<Website> {
     return await this.websiteModel.findById(id).exec();
+  }
+
+  // 根据url获取网站信息
+  async getWebsiteByUrl(url: string): Promise<Website> {
+    const website = await this.websiteModel.findOne({url: url}).exec();
+    if (!website) {
+      throw new HttpException("Website not found", 404);
+    }
+    return website;
   }
 
   // 管理员增加网站
@@ -182,22 +191,16 @@ export class WebsiteService {
   async getLastYearArticleCount(id: string): Promise<number> {
     const oneYearAgo = new Date();
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-
-    return new Promise((resolve, reject) => {
-      this.articleModel.countDocuments(
-          {
-            website_id: id,
-            publish_date: {$gte: oneYearAgo},
-          },
-          (err, count) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(count);
-            }
-          },
-      );
-    });
+    const count = await this.articleModel.countDocuments(
+        {
+          website_id: id,
+          publish_date: {$gte: oneYearAgo},
+        },
+    );
+    if (!count) {
+      throw new HttpException("Website not found", 404)
+    }
+    return count
   }
 
   // 随机抽取6个网站
