@@ -191,22 +191,16 @@ export class WebsiteService {
   async getLastYearArticleCount(id: string): Promise<number> {
     const oneYearAgo = new Date();
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-
-    return new Promise((resolve, reject) => {
-      this.articleModel.countDocuments(
-          {
-            website_id: id,
-            publish_date: {$gte: oneYearAgo},
-          },
-          (err, count) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(count);
-            }
-          },
-      );
-    });
+    const count = await this.articleModel.countDocuments(
+        {
+          website_id: id,
+          publish_date: {$gte: oneYearAgo},
+        },
+    );
+    if (!count) {
+      throw new HttpException("Website not found", 404)
+    }
+    return count
   }
 
   // 随机抽取6个网站
