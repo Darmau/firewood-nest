@@ -1,7 +1,7 @@
 import {extract} from "@extractus/article-extractor";
 import * as cheerio from "cheerio";
-import cloudflareImage from "./cloudflare-image";
-import AIProcess from "./open-ai";
+import cloudflareImage from "@/common/cloudflare-image";
+import AIProcess from "@/common//open-ai";
 
 // 本函数用于从文章中提取出相应信息，包括标题、描述、内容、图片等。
 export default async function getArticleInfo(url: string, website: string) {
