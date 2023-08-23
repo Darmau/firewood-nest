@@ -1,6 +1,6 @@
-import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose";
-import mongoose, {HydratedDocument} from "mongoose";
-import {Website} from "@/schemas/website.schema";
+import { Prop, Schema, SchemaFactory, raw } from "@nestjs/mongoose";
+import mongoose, { HydratedDocument } from "mongoose";
+import { Website } from "./website.schema";
 
 export type ArticleDocument = HydratedDocument<Article>;
 
@@ -27,10 +27,10 @@ export class Article {
   })
   url: string;
 
-  @Prop({required: true})
+  @Prop({ required: true })
   title: string;
 
-  @Prop({default: ""})
+  @Prop({ default: "" })
   description: string;
 
   @Prop()
@@ -39,10 +39,10 @@ export class Article {
   @Prop()
   cover: string;
 
-  @Prop({default: false})
+  @Prop({ default: false })
   isFeatured: boolean;
 
-  @Prop({default: []})
+  @Prop({ default: [] })
   tags: [String];
 
   @Prop()
@@ -59,10 +59,10 @@ export class Article {
   @Prop()
   content: string;
 
-  @Prop({default: false})
+  @Prop({ default: false })
   isBlocked: boolean;
 
-  @Prop({default: 0})
+  @Prop({ default: 0 })
   crawl_error: number;
 }
 
