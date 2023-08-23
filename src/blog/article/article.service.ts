@@ -22,6 +22,9 @@ export class ArticleService {
       page: number,
       limit: number,
   ): Promise<Article[]> {
+    // 防止page和limit为负数
+    if (page < 1) page = 1;
+    if (limit < 1) limit = 15;
     return await this.articleModel
         .find({isBlocked: {$ne: true}})
         .sort({publish_date: -1})
@@ -32,6 +35,9 @@ export class ArticleService {
 
   // 根据最近发布时间，从最新到最旧，获取所有文章
   async getAllArticle(page: number, limit: number): Promise<Article[]> {
+    // 防止page和limit为负数
+    if (page < 1) page = 1;
+    if (limit < 1) limit = 15;
     return await this.articleModel
         .find()
         .sort({publish_date: -1})
@@ -42,6 +48,9 @@ export class ArticleService {
 
   // 获取编辑推荐文章
   async getArticleByRecommend(page: number, limit: number): Promise<Article[]> {
+    // 防止page和limit为负数
+    if (page < 1) page = 1;
+    if (limit < 1) limit = 15;
     return await this.articleModel
         .find({isFeatured: true, isBlocked: {$ne: true}})
         .sort({publish_date: -1})
@@ -75,6 +84,9 @@ export class ArticleService {
       page: number,
       limit: number,
   ): Promise<Article[]> {
+    // 防止page和limit为负数
+    if (page < 1) page = 1;
+    if (limit < 1) limit = 15;
     return await this.articleModel
         .find({topic: topic, isBlocked: {$ne: true}})
         .sort({publish_date: -1})
@@ -89,6 +101,9 @@ export class ArticleService {
       page: number,
       limit: number,
   ): Promise<Article[]> {
+    // 防止page和limit为负数
+    if (page < 1) page = 1;
+    if (limit < 1) limit = 15;
     return await this.articleModel
         .find({website: website, isBlocked: {$ne: true}})
         .sort({publish_date: -1})
