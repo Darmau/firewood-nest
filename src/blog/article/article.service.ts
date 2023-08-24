@@ -67,6 +67,20 @@ export class ArticleService {
       {$match: {isBlocked: {$ne: true}, abstract: {$ne: null}}},
       {$sample: {size: 1}}
     ])).exec();
+  }Ò
+
+  async getManyRandomArticle(): Promise<Article[]> {
+    // 最近3天的文章
+    const date = new Date();
+    date.setDate(date.getDate() - 3);
+    return await this.articleModel.aggregate(([
+      {$match: {
+          isBlocked: {$ne: true},
+          publish_date: {$gte: date},
+          isFeatured: {$ne: true},
+      }},
+      {$sample: {size: 20}}
+    ])).exec();
   }
 
   // 获得指定分类的最新文章

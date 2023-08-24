@@ -138,4 +138,10 @@ export class ArticleController {
   async getRandomArticle() {
     return await this.articleService.getRandomArticle();
   }
+
+  // /article/random-many
+  @Get("random-many")
+  async getManyRandomArticle() {
+    return await this.articleService.getManyRandomArticle();
+  }
 }
