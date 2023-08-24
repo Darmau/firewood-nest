@@ -77,7 +77,7 @@ export class ArticleController {
   }
 
   @Get('article-count')
-  async getArticleCountByBlog(@Query('id') id: string) {
+  async getArticleCountByBlog(@Query("id") id: string) {
     return await this.articleService.getArticleCountByBlog(id);
   }
 

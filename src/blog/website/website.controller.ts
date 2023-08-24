@@ -54,6 +54,7 @@ export class WebsiteController {
   }
 
   // /website/blog?url=
+  // 根据域名查询网站信息
   @Get("blog")
   async getWebsiteByUrl(@Query("url") url: string) {
     // 将传入url之前添加协议名
@@ -118,5 +119,11 @@ export class WebsiteController {
   @Get("random")
   async getRandomWebsite(): Promise<Website[]> {
     return await this.websiteService.getRandomWebsite();
+  }
+
+  // 手动更新开始抓取网站
+  @Post("update")
+  async updateWebsite(@Query("url") url: string) {
+    return await this.articleService.updateArticlesByWebsite(url);
   }
 }

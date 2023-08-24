@@ -106,48 +106,41 @@ export class ArticleService {
       description: string,
       publish_date: Date,
       author: string,
-  ): Promise<Article | String> {
+  ) {
     // 查询是否已存在该 article
     const existArticle = await this.articleModel.findOne({url: url}).exec();
     if (existArticle) {
       return existArticle;
     }
 
-    const article = await getArticleInfo(url, website);
+    try {
+      const article = await getArticleInfo(url, website, description);
 
-    const newArticle = new this.articleModel({
-      website_id: website_id,
-      website: website,
-      author: author,
-      url: url,
-      title: title,
-      description: description,
-      publish_date: publish_date,
-      cover: article.covers,
-      content: article.content,
-      abstract: article.abstract,
-      tags: article.tags,
-      topic: article.topic,
-    });
-
-    await newArticle.save();
-
-    // 读取网站的categories，如果文章的topic不在categories中，则将文章的topic添加到categories中
-    const websiteInfo = await this.websiteModel.findById(website_id).exec();
-    const categories = websiteInfo.categories;
-    // 将topic为null的分类设定为"未分类"
-    const articleTopic = article.topic ? article.topic : "未分类";
-    if (categories.has(articleTopic)) {
-      categories.set(articleTopic, categories.get(articleTopic) + 1);
-    } else {
-      categories.set(articleTopic, 1);
+      const newArticle = new this.articleModel({
+        website_id: website_id,
+        website: website,
+        author: author,
+        url: url,
+        title: title,
+        description: description,
+        publish_date: publish_date,
+        cover: article.cover,
+        content: article.content,
+        abstract: article.abstract,
+        tags: article.tags,
+        topic: article.topic,
+      });
+      await newArticle.save();
+    } catch (error) {
+      this.logger.error(`Error happen on extract or save`)
     }
 
     await this.websiteModel.findByIdAndUpdate(website_id, {
-      categories: categories,
       last_crawl: new Date(),
     });
-    return newArticle;
+    return {
+      status: "OK"
+    };
   }
 
   // 根据网站rss，获取网站最新文章，并传入addArticle方法
@@ -168,7 +161,7 @@ export class ArticleService {
 
     // 从feed中提取文章信息，并找到content和summary
     const feed = await extract(rss, {useISODateFormat: false});
-    const limitedEntries = await feed.entries.slice(0, 50);
+    const limitedEntries = feed.entries.slice(0, 50);
 
     for (const item of limitedEntries) {
       try {
@@ -189,8 +182,13 @@ export class ArticleService {
         );
         continue;
       }
-      // 延迟1秒后执行下一次循环
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // 延迟1-5秒后执行下一次循环
+      await new Promise((resolve) =>
+        setTimeout(
+          resolve,
+          Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000
+        )
+      );
     }
 
     // 更新网站文章数量
@@ -224,9 +222,8 @@ export class ArticleService {
   // 根据文章website字段，统计指定网站的文章数量
   async getArticleCountByWebsite(website: string): Promise<number> {
     const blog = await this.websiteModel.findOne({url: website}).exec();
-    const blogId = await blog._id;
     return await this.articleModel
-        .find({website_id: blogId})
+        .find({website_id: blog._id})
         .countDocuments()
         .exec();
   }

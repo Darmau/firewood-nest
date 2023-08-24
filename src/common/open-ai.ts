@@ -14,7 +14,7 @@ export default async function AIProcess(content: string) {
     const articleData = await articleResponse.text(); // 解析响应数据为文本形式
     return articleData;
   } catch {
-    console.error(`Error on AI process`);
+    this.logger.error(`Error on AI process`);
     return null;
   }
 }

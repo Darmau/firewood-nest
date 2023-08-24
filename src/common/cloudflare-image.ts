@@ -25,14 +25,14 @@ export default async function cloudflareImage(imgUrl: string, website: string) {
     });
 
     if (response.status !== 200) {
-      console.error("Error uploading image to Cloudflare Image", response);
+      this.logger.error("Error uploading image to Cloudflare Image", response);
       return null;
     }
 
     const data = await response.json();
     return `https://imagedelivery.net/${HASH}/${data.result.id}`;
   } catch (error) {
-    console.error("Error uploading image to Cloudflare Image", error);
+    this.logger.error("Error uploading image to Cloudflare Image", error);
     return null;
   }
 }

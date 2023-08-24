@@ -22,7 +22,7 @@ export class AutoService {
   private readonly logger = new Logger(AutoService.name);
 
   // 获取所有website，分别将url传入updateArticlesByWebsite方法, 每4小时执行一次
-  @Cron("0 0 0-16/4 * * *")
+  @Cron("0 0 0-16/2 * * *")
 
   async updateArticle() {
     try {
@@ -31,7 +31,6 @@ export class AutoService {
 
       for (const website of websites) {
         try {
-          this.logger.log("Start update articles at:" + website.url);
           await this.articleService.updateArticlesByWebsite(website.url);
           await this.websiteService.updatePageView(website._id.toString());
         } catch (error) {

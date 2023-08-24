@@ -139,7 +139,7 @@ export class WebsiteService {
       website.rss = rss ? getAbsoluteUrl(url, rss) : null;
       return await website.save();
     } catch (err) {
-      console.error(
+      this.logger.error(
           `Failed to scrape data for website ${url} with error: ${err}`,
       );
     }
@@ -158,7 +158,7 @@ export class WebsiteService {
     return "Delete website successfully";
   }
 
-  // 遍历网站下的文章，获取page_view，计算总访问量
+  // 遍历网站下的文章，计算访问量、分类以及最新发布时间
   async updatePageView(id: string): Promise<Website> {
     // 利用websiteId去article中查找website_id为websiteId的所有文章，并按发布时间倒序排列
     const articles = await this.articleModel
@@ -173,12 +173,27 @@ export class WebsiteService {
 
     this.logger.log(`Update page_view of website ${id} to ${pageView}`);
 
+    // 统计文章的分类
+    const articleCategories = new Map<string, number>();
+    for (const article of articles) {
+      const topic = article.topic || "未分类";
+      if (articleCategories.has(topic)) {
+        articleCategories.set(topic, articleCategories.get(topic) + 1);
+      } else {
+        articleCategories.set(topic, 1);
+      }
+    }
+
     // 顺便更新最新文章发布时间
     const lastPublish = articles[0].publish_date;
 
     // 更新websiteModel中的page_view
     return await this.websiteModel
-        .findByIdAndUpdate(id, {page_view: pageView, last_publish: lastPublish})
+        .findByIdAndUpdate(id, {
+          page_view: pageView,
+          categories: articleCategories,
+          last_publish: lastPublish
+        })
         .exec();
   }
 

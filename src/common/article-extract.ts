@@ -1,50 +1,56 @@
-import {extract} from "@extractus/article-extractor";
+import { extract } from "@extractus/article-extractor";
 import * as cheerio from "cheerio";
 import cloudflareImage from "./cloudflare-image";
 import AIProcess from "./open-ai";
+import getEnglishTopic from "./get-english-topic";
+import { Logger } from "@nestjs/common";
 
 // 本函数用于从文章中提取出相应信息，包括标题、描述、内容、图片等。
-export default async function getArticleInfo(url: string, website: string) {
-  let article;
-  let retries = 0;
-  let images = null;
+export default async function getArticleInfo(
+  url: string,
+  website: string,
+  description: string
+) {
+  let article = null;
+  let cover = null;
   let abstract = null;
   let tags = null;
   let topic = null;
-  while (!article && retries < 2) {
-    try {
-      article = await extract(url);
-      if (article.content) {
-        const $ = cheerio.load(article.content);
-        const contentString = $.text();
+  const logger = new Logger();
+  logger.debug(`Start extract article from ${url}`)
 
-        const articleData = await AIProcess(contentString);
-        const articleJson = await JSON.parse(articleData);
-        // 获取文章摘要
-        abstract = await articleJson.abstract;
+  try {
+    article = await extract(url);
 
-        // 获取文章标签
-        tags = await articleJson.tags;
+    if (article.content) {
+      const $ = cheerio.load(article.content);
+      const contentString = $.text();
 
-        // 获取文章分类
-        topic = getEnglishTopic(articleJson.category);
-      }
-    } catch (error) {
-      console.error(`Error extracting article: ${error}`);
-      return {
-        cover: null,
-        content: article ? article.content : null,
-        abstract: abstract,
-        tags: tags,
-        topic: topic,
-      };
+      const articleData = await AIProcess(contentString || description);
+      const articleJson = JSON.parse(articleData);
+      // 获取文章摘要
+      abstract = articleJson.abstract;
+
+      // 获取文章标签
+      tags = articleJson.tags;
+
+      // 获取文章分类
+      topic = getEnglishTopic(articleJson.category);
     }
-    // 添加随机延时，1-10秒之间
-    await new Promise((resolve) => setTimeout(resolve, Math.random() * 10000));
 
-    retries++;
-  }
-  if (!article) {
+    if (article && article.image) {
+      cover = await cloudflareImage(article.image, website);
+    }
+    logger.debug(`Successfully extract info from ${article.title}`)
+    return {
+      cover: cover,
+      content: article.content || null,
+      abstract: abstract,
+      tags: tags,
+      topic: topic,
+    };
+  } catch (error) {
+    this.logger.error(`Cannot extract from ${url}, ${error}`);
     return {
       cover: null,
       content: null,
@@ -53,40 +59,4 @@ export default async function getArticleInfo(url: string, website: string) {
       topic: null,
     };
   }
-  try {
-    images = await cloudflareImage(article.image, website);
-  } catch {
-    console.error(`Error processing image of: ${article.title}`);
-  }
-  return {
-    covers: images,
-    content: article.content || null,
-    abstract: abstract,
-    tags: tags,
-    topic: topic,
-  };
-}
-
-// 用于将中文的分类转换成英文
-function getEnglishTopic(chinese) {
-  const topicList = new Map([
-    ["技术", "tech"],
-    ["编程", "code"],
-    ["社会", "society"],
-    ["情感", "emotion"],
-    ["旅行", "travel"],
-    ["日记", "diary"],
-    ["生活", "life"],
-    ["职场", "career"],
-    ["人文社科", "culture"],
-    ["政治", "politics"],
-    ["教育", "education"],
-    ["综合", "others"],
-  ]);
-
-  if (!topicList.has(chinese)) {
-    return "others";
-  }
-
-  return topicList.get(chinese);
 }
