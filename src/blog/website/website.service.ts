@@ -204,6 +204,9 @@ export class WebsiteService {
 
   // 计算网站最近一年发布的文章
   async getLastYearArticleCount(id: string): Promise<number> {
+    if(!id) {
+      throw new HttpException("Invalid website id", 400);
+    }
     const oneYearAgo = new Date();
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
     const count = await this.articleModel.countDocuments(
@@ -212,9 +215,6 @@ export class WebsiteService {
           publish_date: {$gte: oneYearAgo},
         },
     );
-    if (!count) {
-      throw new HttpException("Website not found", 404)
-    }
     return count
   }
 
