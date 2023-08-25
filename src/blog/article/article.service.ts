@@ -180,7 +180,11 @@ export class ArticleService {
     for (const item of limitedEntries) {
       try {
         // 转换日期为统一的ISO格式
-        const publish_date = item.published || new Date();
+        let publish_date = item.published || new Date();
+        // 如果日期超过现在，则设置为现在
+        if (publish_date > new Date()) {
+          publish_date = new Date();
+        }
         await this.addArticle(
             item.link,
             websiteId,
