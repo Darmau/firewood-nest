@@ -56,7 +56,7 @@ export default async function getArticleInfo(
       logger.debug(`Successfully extract info from ${article.title}`)
       return {
         cover: cover,
-        content: article.content,
+        content: article.content || null,
         abstract: abstract,
         tags: tags,
         topic: topic,
