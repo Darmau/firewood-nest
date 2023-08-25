@@ -174,13 +174,13 @@ export class ArticleService {
     }
 
     // 从feed中提取文章信息，并找到content和summary
-    const feed = await extract(rss, {useISODateFormat: false});
+    const feed = await extract(rss);
     const limitedEntries = feed.entries.slice(0, 50);
 
     for (const item of limitedEntries) {
       try {
         // 转换日期为统一的ISO格式
-        const publish_date = convertDate(item.published);
+        const publish_date = item.published || new Date();
         await this.addArticle(
             item.link,
             websiteId,
