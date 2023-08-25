@@ -22,7 +22,17 @@ export default async function getArticleInfo(
 
   while (!article && retries < 3) {
     try {
-      article = await extract(url);
+      article = await extract(url, {
+        wordsPerMinute: 300,
+        descriptionTruncateLen: 180,
+        descriptionLengthThreshold: 40,
+        contentLengthThreshold: 180
+      },{
+        headers: {
+          'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36'
+        },
+        signal: AbortSignal.timeout(10000)
+      });
 
       if (article.content) {
         const $ = cheerio.load(article.content);
