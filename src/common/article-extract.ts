@@ -16,47 +16,57 @@ export default async function getArticleInfo(
   let abstract = null;
   let tags = null;
   let topic = null;
+  let retries = 0;
   const logger = new Logger();
   logger.debug(`Start extract article from ${url}`)
 
-  try {
-    article = await extract(url);
+  while (!article && retries < 3) {
+    try {
+      article = await extract(url);
 
-    if (article.content) {
-      const $ = cheerio.load(article.content);
-      const contentString = $.text();
+      if (article.content) {
+        const $ = cheerio.load(article.content);
+        const contentString = $.text();
 
-      const articleData = await AIProcess(contentString || description);
-      const articleJson = JSON.parse(articleData);
-      // 获取文章摘要
-      abstract = articleJson.abstract;
+        const articleData = await AIProcess(contentString || description);
+        const articleJson = JSON.parse(articleData);
+        // 获取文章摘要
+        abstract = articleJson.abstract;
 
-      // 获取文章标签
-      tags = articleJson.tags;
+        // 获取文章标签
+        tags = articleJson.tags;
 
-      // 获取文章分类
-      topic = getEnglishTopic(articleJson.category);
+        // 获取文章分类
+        topic = getEnglishTopic(articleJson.category);
+      }
+
+      if (article && article.image) {
+        cover = await cloudflareImage(article.image, website);
+      }
+      logger.debug(`Successfully extract info from ${article.title}`)
+      return {
+        cover: cover,
+        content: article.content || null,
+        abstract: abstract,
+        tags: tags,
+        topic: topic,
+      };
+    } catch (error) {
+      logger.error(`Cannot extract from ${url}, ${error}`);
+      await new Promise((resolve) =>
+          setTimeout(
+              resolve,
+              Math.floor(Math.random() * (3000 - 1000 + 1)) + 1000
+          )
+      );
+      retries++;
     }
-
-    if (article && article.image) {
-      cover = await cloudflareImage(article.image, website);
-    }
-    logger.debug(`Successfully extract info from ${article.title}`)
-    return {
-      cover: cover,
-      content: article.content || null,
-      abstract: abstract,
-      tags: tags,
-      topic: topic,
-    };
-  } catch (error) {
-    this.logger.error(`Cannot extract from ${url}, ${error}`);
-    return {
-      cover: null,
-      content: null,
-      abstract: null,
-      tags: null,
-      topic: null,
-    };
   }
+  return {
+    cover: null,
+    content: null,
+    abstract: null,
+    tags: null,
+    topic: null,
+  };
 }
