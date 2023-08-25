@@ -129,7 +129,7 @@ export class ArticleService {
 
     try {
       const article = await getArticleInfo(url, website, description);
-
+      this.logger.debug(`Start save article ${title}`)
       const newArticle = new this.articleModel({
         website_id: website_id,
         website: website,
@@ -146,7 +146,7 @@ export class ArticleService {
       });
       await newArticle.save();
     } catch (error) {
-      this.logger.error(`Error happen on extract or save`)
+      this.logger.error(`Error happen on extract or save: ${error}`)
     }
 
     await this.websiteModel.findByIdAndUpdate(website_id, {
