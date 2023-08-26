@@ -1,42 +1,41 @@
-import {HttpException, Injectable, Logger} from "@nestjs/common";
-import {InjectModel} from "@nestjs/mongoose";
+import { HttpException, Injectable, Logger } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
 import * as cheerio from "cheerio";
-import {Model} from "mongoose";
+import { Model } from "mongoose";
 import replaceDomain from "@/common/replace-domain";
-import {Article} from "@/schemas/article.schema";
-import {Website} from "@/schemas/website.schema";
+import { Article } from "@/schemas/article.schema";
+import { Website } from "@/schemas/website.schema";
 
 @Injectable()
 export class WebsiteService {
   constructor(
-      @InjectModel("Website") private websiteModel: Model<Website>,
-      @InjectModel("Article") private articleModel: Model<Article>,
-  ) {
-  }
+    @InjectModel("Website") private websiteModel: Model<Website>,
+    @InjectModel("Article") private articleModel: Model<Article>,
+  ) {}
 
   private readonly logger = new Logger(WebsiteService.name);
 
   // 根据网站总访问量，倒序排列，获取所有网站
   async getWebsiteByPageView(page: number, limit: number): Promise<Website[]> {
     return await this.websiteModel
-        .find()
-        .sort({page_view: -1})
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .exec();
+      .find()
+      .sort({ page_view: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .exec();
   }
 
   // 根据最近更新时间，倒序排列，获取所有网站，根据传入的page和limit分页
   async getWebsiteByLastPublish(
-      page: number,
-      limit: number,
+    page: number,
+    limit: number,
   ): Promise<Website[]> {
     return await this.websiteModel
-        .find()
-        .sort({last_publish: -1})
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .exec();
+      .find()
+      .sort({ last_publish: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .exec();
   }
 
   // 根据id获取指定网站信息
@@ -46,7 +45,7 @@ export class WebsiteService {
 
   // 根据url获取网站信息
   async getWebsiteByUrl(url: string): Promise<Website> {
-    const website = await this.websiteModel.findOne({url: url}).exec();
+    const website = await this.websiteModel.findOne({ url: url }).exec();
     if (!website) {
       throw new HttpException("Website not found", 404);
     }
@@ -58,20 +57,20 @@ export class WebsiteService {
     if (url.endsWith("/")) {
       url = url.slice(0, -1);
     }
-    const website = new this.websiteModel({url: url, name: name});
+    const website = new this.websiteModel({ url: url, name: name });
     await website.save();
     await this.updateWebsiteInfo(url);
-    return await this.websiteModel.findOne({url: url}).exec();
+    return await this.websiteModel.findOne({ url: url }).exec();
   }
 
   // 管理员修改网站信息
   async updateWebsite(
-      id: string,
-      url?: string,
-      rss?: string,
-      name?: string,
-      description?: string,
-      cover?: string,
+    id: string,
+    url?: string,
+    rss?: string,
+    name?: string,
+    description?: string,
+    cover?: string,
   ): Promise<Website> {
     const website = await this.websiteModel.findById(id).exec();
     if (rss) {
@@ -86,7 +85,7 @@ export class WebsiteService {
     // 修改文章内的网站名
     if (name) {
       website.name = name;
-      const articles = await this.articleModel.find({website_id: id}).exec();
+      const articles = await this.articleModel.find({ website_id: id }).exec();
       for (const article of articles) {
         await this.articleModel.findByIdAndUpdate(article._id, {
           author: name,
@@ -96,7 +95,7 @@ export class WebsiteService {
     // 修改文章中的url
     if (url) {
       website.url = url;
-      const articles = await this.articleModel.find({website_id: id}).exec();
+      const articles = await this.articleModel.find({ website_id: id }).exec();
       for (const article of articles) {
         await this.articleModel.findByIdAndUpdate(article._id, {
           url: replaceDomain(article.url, url),
@@ -129,10 +128,10 @@ export class WebsiteService {
       // 提取title、description、rss、favicon信息
       const description = $('head meta[name="description"]').attr("content");
       const rss =
-          $('head link[type="application/rss+xml"]').attr("href") ||
-          $('head link[type="application/atom+xml"]').attr("href");
+        $('head link[type="application/rss+xml"]').attr("href") ||
+        $('head link[type="application/atom+xml"]').attr("href");
       const favIcon = $('head link[rel="icon"]').attr("href");
-      const website = await this.websiteModel.findOne({url: url});
+      const website = await this.websiteModel.findOne({ url: url });
 
       website.cover = favIcon ? getAbsoluteUrl(url, favIcon) : null;
       website.description = description || "No description";
@@ -140,7 +139,7 @@ export class WebsiteService {
       return await website.save();
     } catch (err) {
       this.logger.error(
-          `Failed to scrape data for website ${url} with error: ${err}`,
+        `Failed to scrape data for website ${url} with error: ${err}`,
       );
     }
   }
@@ -151,7 +150,7 @@ export class WebsiteService {
     await this.websiteModel.findByIdAndDelete(id);
 
     // 删除网站下的所有文章
-    const articles = await this.articleModel.find({website_id: id}).exec();
+    const articles = await this.articleModel.find({ website_id: id }).exec();
     for (const article of articles) {
       await this.articleModel.findByIdAndDelete(article._id);
     }
@@ -162,13 +161,13 @@ export class WebsiteService {
   async updatePageView(id: string): Promise<Website> {
     // 利用websiteId去article中查找website_id为websiteId的所有文章，并按发布时间倒序排列
     const articles = await this.articleModel
-        .find({website_id: id})
-        .sort({publish_date: -1});
+      .find({ website_id: id })
+      .sort({ publish_date: -1 });
 
     // 计算所有文章的page_view总和
     const pageView = articles.reduce(
-        (totalPageView, article) => totalPageView + article.page_view,
-        0,
+      (totalPageView, article) => totalPageView + article.page_view,
+      0,
     );
 
     this.logger.log(`Update page_view of website ${id} to ${pageView}`);
@@ -189,12 +188,12 @@ export class WebsiteService {
 
     // 更新websiteModel中的page_view
     return await this.websiteModel
-        .findByIdAndUpdate(id, {
-          page_view: pageView,
-          categories: articleCategories,
-          last_publish: lastPublish
-        })
-        .exec();
+      .findByIdAndUpdate(id, {
+        page_view: pageView,
+        categories: articleCategories,
+        last_publish: lastPublish,
+      })
+      .exec();
   }
 
   // 获取网站总数
@@ -204,24 +203,20 @@ export class WebsiteService {
 
   // 计算网站最近一年发布的文章
   async getLastYearArticleCount(id: string): Promise<number> {
-    if(!id) {
+    if (!id) {
       throw new HttpException("Invalid website id", 400);
     }
     const oneYearAgo = new Date();
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-    const count = await this.articleModel.countDocuments(
-        {
-          website_id: id,
-          publish_date: {$gte: oneYearAgo},
-        },
-    );
-    return count
+    const count = await this.articleModel.countDocuments({
+      website_id: id,
+      publish_date: { $gte: oneYearAgo },
+    });
+    return count;
   }
 
   // 随机抽取6个网站
   async getRandomWebsite(): Promise<Website[]> {
-    return await this.websiteModel.aggregate([
-      {$sample: {size: 6}},
-    ]).exec();
+    return await this.websiteModel.aggregate([{ $sample: { size: 6 } }]).exec();
   }
 }

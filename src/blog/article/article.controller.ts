@@ -7,22 +7,21 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
-import {AuthGuard} from "@/auth/auth.guard";
-import {AddArticleDto} from "@/dto/addArticle.dto";
-import {ArticleService} from "@/blog/article/article.service";
-import {GetArticleCountDto} from "@/dto/getArticleCount.dto";
-import {PositiveIntPipe} from "@/pipe/positiveInt.pipe";
+import { AuthGuard } from "@/auth/auth.guard";
+import { AddArticleDto } from "@/dto/addArticle.dto";
+import { ArticleService } from "@/blog/article/article.service";
+import { GetArticleCountDto } from "@/dto/getArticleCount.dto";
+import { PositiveIntPipe } from "@/pipe/positiveInt.pipe";
 
 @Controller("article")
 export class ArticleController {
-  constructor(private articleService: ArticleService) {
-  }
+  constructor(private articleService: ArticleService) {}
 
   // /article/latest?page=1&limit=10
   @Get("latest")
   async getAllUnblockedArticle(
-      @Query("page", PositiveIntPipe) page: number = 1,
-      @Query("limit", PositiveIntPipe) limit: number = 15,
+    @Query("page", PositiveIntPipe) page: number = 1,
+    @Query("limit", PositiveIntPipe) limit: number = 15,
   ) {
     return await this.articleService.getAllUnblockedArticle(page, limit);
   }
@@ -30,8 +29,8 @@ export class ArticleController {
   // /article/all?page=1&limit=10
   @Get("all")
   async getAllArticle(
-      @Query("page", PositiveIntPipe) page: number = 1,
-      @Query("limit", PositiveIntPipe) limit: number = 15,
+    @Query("page", PositiveIntPipe) page: number = 1,
+    @Query("limit", PositiveIntPipe) limit: number = 15,
   ) {
     return await this.articleService.getAllArticle(page, limit);
   }
@@ -39,8 +38,8 @@ export class ArticleController {
   // /article/featured?page=&limit=5
   @Get("featured")
   async getArticleByRecommend(
-      @Query("page", PositiveIntPipe) page: number = 1,
-      @Query("limit", PositiveIntPipe) limit: number = 15,
+    @Query("page", PositiveIntPipe) page: number = 1,
+    @Query("limit", PositiveIntPipe) limit: number = 15,
   ) {
     return await this.articleService.getArticleByRecommend(page, limit);
   }
@@ -49,9 +48,9 @@ export class ArticleController {
   // /article/topic?topic=&page=1&limit=6
   @Get("topic")
   async getArticleByTopic(
-      @Query("topic") topic: string,
-      @Query("page", PositiveIntPipe) page: number = 1,
-      @Query("limit", PositiveIntPipe) limit: number = 15,
+    @Query("topic") topic: string,
+    @Query("page", PositiveIntPipe) page: number = 1,
+    @Query("limit", PositiveIntPipe) limit: number = 15,
   ) {
     return await this.articleService.getArticleByTopic(topic, page, limit);
   }
@@ -60,24 +59,24 @@ export class ArticleController {
   @Post("count")
   async getArticleCount(@Body() getArticleCount: GetArticleCountDto) {
     return await this.articleService.getArticleCount(
-        getArticleCount.type,
-        getArticleCount.topic,
-        getArticleCount.startAt,
-        getArticleCount.endAt,
+      getArticleCount.type,
+      getArticleCount.topic,
+      getArticleCount.startAt,
+      getArticleCount.endAt,
     );
   }
 
   // /article?website=https://darmau.design&page=1&limit=10
   @Get()
   async getArticleByBlog(
-      @Query("website") url: string,
-      @Query("page", PositiveIntPipe) page: number = 1,
-      @Query("limit", PositiveIntPipe) limit: number = 15,
+    @Query("website") url: string,
+    @Query("page", PositiveIntPipe) page: number = 1,
+    @Query("limit", PositiveIntPipe) limit: number = 15,
   ) {
     return await this.articleService.getArticleByBlog(url, page, limit);
   }
 
-  @Get('article-count')
+  @Get("article-count")
   async getArticleCountByBlog(@Query("id") id: string) {
     return await this.articleService.getArticleCountByBlog(id);
   }
@@ -87,13 +86,13 @@ export class ArticleController {
   @Post("add")
   async addArticle(@Body() addArticleDto: AddArticleDto) {
     return await this.articleService.addArticle(
-        addArticleDto.url,
-        addArticleDto.website_id,
-        addArticleDto.website,
-        addArticleDto.title,
-        addArticleDto.description,
-        addArticleDto.publish_date,
-        addArticleDto.author,
+      addArticleDto.url,
+      addArticleDto.website_id,
+      addArticleDto.website,
+      addArticleDto.title,
+      addArticleDto.description,
+      addArticleDto.publish_date,
+      addArticleDto.author,
     );
   }
 
@@ -121,8 +120,8 @@ export class ArticleController {
   @UseGuards(AuthGuard)
   @Put("edit")
   async editArticleTopic(
-      @Query("id") id: string,
-      @Query("topic") topic: string,
+    @Query("id") id: string,
+    @Query("topic") topic: string,
   ) {
     return await this.articleService.editArticleTopic(id, topic);
   }

@@ -1,5 +1,5 @@
-import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose";
-import {HydratedDocument} from "mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { HydratedDocument } from "mongoose";
 
 export type WebsiteDocument = HydratedDocument<Website>;
 
@@ -48,7 +48,7 @@ export class Website {
   })
   page_view: number;
 
-  @Prop({default: Date.now})
+  @Prop({ default: Date.now })
   last_publish: Date;
 
   @Prop({
