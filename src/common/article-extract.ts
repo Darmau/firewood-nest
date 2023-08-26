@@ -9,7 +9,7 @@ import { Logger } from "@nestjs/common";
 export default async function getArticleInfo(
   url: string,
   website: string,
-  description: string
+  description: string,
 ) {
   let article = null;
   let cover = null;
@@ -18,21 +18,26 @@ export default async function getArticleInfo(
   let topic = null;
   let retries = 0;
   const logger = new Logger();
-  logger.debug(`Start extract article from ${url}`)
+  logger.debug(`Start extract article from ${url}`);
 
   while (!article && retries < 3) {
     try {
-      article = await extract(url, {
-        wordsPerMinute: 300,
-        descriptionTruncateLen: 180,
-        descriptionLengthThreshold: 40,
-        contentLengthThreshold: 180
-      },{
-        headers: {
-          'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36'
+      article = await extract(
+        url,
+        {
+          wordsPerMinute: 300,
+          descriptionTruncateLen: 180,
+          descriptionLengthThreshold: 40,
+          contentLengthThreshold: 180,
         },
-        signal: AbortSignal.timeout(10000)
-      });
+        {
+          headers: {
+            "user-agent":
+              "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36",
+          },
+          signal: AbortSignal.timeout(10000),
+        },
+      );
 
       if (article.content) {
         const $ = cheerio.load(article.content);
@@ -53,7 +58,7 @@ export default async function getArticleInfo(
       if (article && article.image) {
         cover = await cloudflareImage(article.image, website);
       }
-      logger.debug(`Successfully extract info from ${article.title}`)
+      logger.debug(`Successfully extract info from ${article.title}`);
       return {
         cover: cover,
         content: article.content || null,
@@ -64,10 +69,10 @@ export default async function getArticleInfo(
     } catch (error) {
       logger.error(`Cannot extract from ${url}, ${error}`);
       await new Promise((resolve) =>
-          setTimeout(
-              resolve,
-              Math.floor(Math.random() * (3000 - 1000 + 1)) + 1000
-          )
+        setTimeout(
+          resolve,
+          Math.floor(Math.random() * (3000 - 1000 + 1)) + 1000,
+        ),
       );
       retries++;
     }
