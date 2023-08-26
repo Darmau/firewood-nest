@@ -21,8 +21,8 @@ export class AutoService {
 
   private readonly logger = new Logger(AutoService.name);
 
-  // 获取所有website，分别将url传入updateArticlesByWebsite方法, 每2小时执行一次
-  @Cron("0 0 0-16/2 * * *")
+  // 获取所有website，分别将url传入updateArticlesByWebsite方法, 每4小时执行一次
+  @Cron("0 0 0-16/4 * * *")
   async updateArticle() {
     try {
       const websites = await this.websiteModel.find();
