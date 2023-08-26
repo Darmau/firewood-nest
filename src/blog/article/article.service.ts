@@ -6,6 +6,7 @@ import getArticleInfo from "@/common/article-extract";
 import convertDate from "@/common/convert-date";
 import {Article} from "@/schemas/article.schema";
 import {Website} from "@/schemas/website.schema";
+import feedExtract from "@/common/feed-extract";
 
 @Injectable()
 export class ArticleService {
@@ -174,24 +175,17 @@ export class ArticleService {
     }
 
     // 从feed中提取文章信息，并找到content和summary
-    const feed = await extract(rss);
-    const limitedEntries = feed.entries.slice(0, 50);
+    const articlesFromFeed = await feedExtract(rss);
 
-    for (const item of limitedEntries) {
+    for (const item of articlesFromFeed) {
       try {
-        // 转换日期为统一的ISO格式
-        let publish_date = item.published || new Date();
-        // 如果日期超过现在，则设置为现在
-        if (publish_date > new Date()) {
-          publish_date = new Date();
-        }
         await this.addArticle(
             item.link,
             websiteId,
             websiteUrl,
             item.title,
             item.description,
-            publish_date,
+            convertDate(item.published),
             author,
         );
       } catch {
