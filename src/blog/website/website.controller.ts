@@ -14,6 +14,7 @@ import {UpdateWebsiteDto} from "@/dto/updateWebsite.dto";
 import {AuthGuard} from "@/auth/auth.guard";
 import {ArticleService} from "@/blog/article/article.service";
 import {Website} from "@/schemas/website.schema";
+import {PositiveIntPipe} from "@/pipe/positiveInt.pipe";
 
 @Controller("website")
 export class WebsiteController {
@@ -26,8 +27,8 @@ export class WebsiteController {
   // /website/most-view?page=1&limit=10
   @Get("most-view")
   async getWebsiteByPageView(
-      @Query("page") page: number,
-      @Query("limit") limit: number,
+      @Query("page", PositiveIntPipe) page: number = 1,
+      @Query("limit", PositiveIntPipe) limit: number = 15,
   ) {
     return await this.websiteService.getWebsiteByPageView(page, limit);
   }
@@ -35,8 +36,8 @@ export class WebsiteController {
   // /website/latest?page=1&limit=10
   @Get("latest")
   async getWebsiteByLastPublish(
-      @Query("page") page: number,
-      @Query("limit") limit: number,
+      @Query("page", PositiveIntPipe) page: number = 1,
+      @Query("limit", PositiveIntPipe) limit: number = 15,
   ) {
     return await this.websiteService.getWebsiteByLastPublish(page, limit);
   }

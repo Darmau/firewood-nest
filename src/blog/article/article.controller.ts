@@ -11,6 +11,7 @@ import {AuthGuard} from "@/auth/auth.guard";
 import {AddArticleDto} from "@/dto/addArticle.dto";
 import {ArticleService} from "@/blog/article/article.service";
 import {GetArticleCountDto} from "@/dto/getArticleCount.dto";
+import {PositiveIntPipe} from "@/pipe/positiveInt.pipe";
 
 @Controller("article")
 export class ArticleController {
@@ -20,8 +21,8 @@ export class ArticleController {
   // /article/latest?page=1&limit=10
   @Get("latest")
   async getAllUnblockedArticle(
-      @Query("page") page: number,
-      @Query("limit") limit: number,
+      @Query("page", PositiveIntPipe) page: number = 1,
+      @Query("limit", PositiveIntPipe) limit: number = 15,
   ) {
     return await this.articleService.getAllUnblockedArticle(page, limit);
   }
@@ -29,8 +30,8 @@ export class ArticleController {
   // /article/all?page=1&limit=10
   @Get("all")
   async getAllArticle(
-      @Query("page") page: number,
-      @Query("limit") limit: number,
+      @Query("page", PositiveIntPipe) page: number = 1,
+      @Query("limit", PositiveIntPipe) limit: number = 15,
   ) {
     return await this.articleService.getAllArticle(page, limit);
   }
@@ -38,8 +39,8 @@ export class ArticleController {
   // /article/featured?page=&limit=5
   @Get("featured")
   async getArticleByRecommend(
-      @Query("page") page: number,
-      @Query("limit") limit: number,
+      @Query("page", PositiveIntPipe) page: number = 1,
+      @Query("limit", PositiveIntPipe) limit: number = 15,
   ) {
     return await this.articleService.getArticleByRecommend(page, limit);
   }
@@ -49,8 +50,8 @@ export class ArticleController {
   @Get("topic")
   async getArticleByTopic(
       @Query("topic") topic: string,
-      @Query("page") page: number,
-      @Query("limit") limit: number,
+      @Query("page", PositiveIntPipe) page: number = 1,
+      @Query("limit", PositiveIntPipe) limit: number = 15,
   ) {
     return await this.articleService.getArticleByTopic(topic, page, limit);
   }
@@ -70,8 +71,8 @@ export class ArticleController {
   @Get()
   async getArticleByBlog(
       @Query("website") url: string,
-      @Query("page") page: number,
-      @Query("limit") limit: number,
+      @Query("page", PositiveIntPipe) page: number = 1,
+      @Query("limit", PositiveIntPipe) limit: number = 15,
   ) {
     return await this.articleService.getArticleByBlog(url, page, limit);
   }
@@ -129,7 +130,7 @@ export class ArticleController {
   // /article/hottest?limit=10
   // 获取一周范围内最热门的文章
   @Get("hottest")
-  async getHotestArticle(@Query("limit") limit: number = 10) {
+  async getHotestArticle(@Query("limit", PositiveIntPipe) limit: number = 10) {
     return await this.articleService.getHotestArticle(limit);
   }
 
