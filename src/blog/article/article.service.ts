@@ -194,13 +194,6 @@ export class ArticleService {
         );
         continue;
       }
-      // 延迟1-5秒后执行下一次循环
-      await new Promise((resolve) =>
-        setTimeout(
-          resolve,
-          Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000
-        )
-      );
     }
 
     // 更新网站文章数量
