@@ -138,7 +138,7 @@ export class ArticleService {
 
     try {
       const article = await getArticleInfo(url, website, description);
-      this.logger.debug(`Start save article ${title}`);
+      this.logger.debug(`Start save article ${title}, publish at ${publish_date}`);
       const newArticle = new this.articleModel({
         website_id: website_id,
         website: website,
