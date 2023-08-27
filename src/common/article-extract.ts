@@ -44,15 +44,18 @@ export default async function getArticleInfo(
         const contentString = $.text();
 
         const articleData = await AIProcess(contentString || description);
-        const articleJson = JSON.parse(articleData);
-        // 获取文章摘要
-        abstract = articleJson.abstract;
 
-        // 获取文章标签
-        tags = articleJson.tags;
+        if (articleData) {
+          const articleJson = JSON.parse(articleData);
+          // 获取文章摘要
+          abstract = articleJson.abstract;
 
-        // 获取文章分类
-        topic = getEnglishTopic(articleJson.category);
+          // 获取文章标签
+          tags = articleJson.tags;
+
+          // 获取文章分类
+          topic = getEnglishTopic(articleJson.category);
+        }
       }
 
       if (article && article.image) {
@@ -60,7 +63,7 @@ export default async function getArticleInfo(
       }
       logger.debug(`Successfully extract info from ${article.title}`);
       return {
-        cover: cover,
+        cover: cover || null,
         content: article.content || null,
         abstract: abstract,
         tags: tags,

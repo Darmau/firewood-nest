@@ -1,6 +1,9 @@
+import {Logger} from "@nestjs/common";
+
 export default async function AIProcess(content: string) {
   const TOKEN = process.env.WORKERS_TOKEN;
   const API = process.env.WORKERS_API;
+  const logger = new Logger();
   try {
     const articleResponse = await fetch(API, {
       method: "POST",
@@ -14,7 +17,7 @@ export default async function AIProcess(content: string) {
     const articleData = await articleResponse.text(); // 解析响应数据为文本形式
     return articleData;
   } catch {
-    this.logger.error(`Error on AI process`);
+    logger.error(`Error on AI process`);
     return null;
   }
 }
