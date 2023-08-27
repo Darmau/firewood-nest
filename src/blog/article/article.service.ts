@@ -131,7 +131,9 @@ export class ArticleService {
     // 查询是否已存在该 article
     const existArticle = await this.articleModel.findOne({ url: url }).exec();
     if (existArticle) {
-      return existArticle;
+      return {
+        status: "EXIST",
+      };
     }
 
     try {
@@ -185,7 +187,7 @@ export class ArticleService {
 
     for (const item of articlesFromFeed) {
       try {
-        await this.addArticle(
+        const feed = await this.addArticle(
           item.link,
           websiteId,
           websiteUrl,
@@ -194,6 +196,9 @@ export class ArticleService {
           convertDate(item.published),
           author,
         );
+        if (feed.status === "EXIST") {
+          break;
+        }
       } catch {
         this.logger.error(
           `Add article ${item.title} of url ${item.link} failed`,
