@@ -41,6 +41,15 @@ export class WebsiteController {
     return await this.websiteService.getWebsiteByLastPublish(page, limit);
   }
 
+  // /website/all?page=1&limit=10
+  @Get("all")
+  async getAllWebsite(
+      @Query("page", PositiveIntPipe) page: number = 1,
+      @Query("limit", PositiveIntPipe) limit: number = 15
+  ) {
+    return await this.websiteService.getAllWebsite(page, limit);
+  }
+
   // /website/count
   @Get("count")
   async getWebsiteCount() {
