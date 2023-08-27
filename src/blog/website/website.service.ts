@@ -18,7 +18,7 @@ export class WebsiteService {
   // 根据网站总访问量，倒序排列，获取所有网站
   async getWebsiteByPageView(page: number, limit: number): Promise<Website[]> {
     return await this.websiteModel
-      .find({article_count: {$gt: 0}})
+      .find({ article_count: { $gt: 0 } })
       .sort({ page_view: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
@@ -31,7 +31,7 @@ export class WebsiteService {
     limit: number,
   ): Promise<Website[]> {
     return await this.websiteModel
-      .find({article_count: {$gt: 0}})
+      .find({ article_count: { $gt: 0 } })
       .sort({ last_publish: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
