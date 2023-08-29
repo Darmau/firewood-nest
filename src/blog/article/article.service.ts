@@ -27,6 +27,7 @@ export class ArticleService {
       .sort({ publish_date: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
+      .allowDiskUse(true)
       .exec();
   }
 
@@ -37,6 +38,7 @@ export class ArticleService {
       .sort({ publish_date: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
+      .allowDiskUse(true)
       .exec();
   }
 
@@ -47,6 +49,7 @@ export class ArticleService {
       .sort({ publish_date: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
+      .allowDiskUse(true)
       .exec();
   }
 
@@ -58,6 +61,7 @@ export class ArticleService {
       .find({ publish_date: { $gte: date }, isBlocked: { $ne: true } })
       .sort({ page_view: -1 })
       .limit(limit)
+      .allowDiskUse(true)
       .exec();
   }
 
@@ -101,6 +105,7 @@ export class ArticleService {
       .sort({ publish_date: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
+      .allowDiskUse(true)
       .exec();
   }
 
@@ -115,6 +120,7 @@ export class ArticleService {
       .sort({ publish_date: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
+      .allowDiskUse(true)
       .exec();
   }
 

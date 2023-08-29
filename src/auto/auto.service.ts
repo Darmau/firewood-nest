@@ -24,7 +24,7 @@ export class AutoService {
   @Cron("0 0 0-16/4 * * *")
   async updateArticle() {
     try {
-      const websites = await this.websiteModel.find();
+      const websites = await this.websiteModel.find().allowDiskUse(true);
       this.logger.log("Start update " + websites.length + " websites");
 
       for (const website of websites) {
@@ -63,7 +63,8 @@ export class AutoService {
       .find()
       .sort({ publish_date: 1 })
       .limit(1000)
-      .skip(offset);
+      .skip(offset)
+      .allowDiskUse(true);
 
     this.logger.log(`Start check articles from ${offset} to ${offset + 1000}`);
 

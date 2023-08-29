@@ -25,6 +25,7 @@ export class WebsiteService {
       .sort({ page_view: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
+      .allowDiskUse(true)
       .exec();
   }
 
@@ -38,6 +39,7 @@ export class WebsiteService {
       .sort({ last_publish: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
+      .allowDiskUse(true)
       .exec();
   }
 
@@ -51,6 +53,7 @@ export class WebsiteService {
                      .sort({ last_publish: -1 })
                      .skip((page - 1) * limit)
                      .limit(limit)
+                     .allowDiskUse(true)
                      .exec();
   }
 
@@ -101,7 +104,7 @@ export class WebsiteService {
     // 修改文章内的网站名
     if (name) {
       website.name = name;
-      const articles = await this.articleModel.find({ website_id: id }).exec();
+      const articles = await this.articleModel.find({ website_id: id }).allowDiskUse(true).exec();
       for (const article of articles) {
         await this.articleModel.findByIdAndUpdate(article._id, {
           author: name,
@@ -111,7 +114,7 @@ export class WebsiteService {
     // 修改文章中的url
     if (url) {
       website.url = url;
-      const articles = await this.articleModel.find({ website_id: id }).exec();
+      const articles = await this.articleModel.find({ website_id: id }).allowDiskUse(true).exec();
       for (const article of articles) {
         await this.articleModel.findByIdAndUpdate(article._id, {
           url: replaceDomain(article.url, url),
@@ -166,7 +169,7 @@ export class WebsiteService {
     await this.websiteModel.findByIdAndDelete(id);
 
     // 删除网站下的所有文章
-    const articles = await this.articleModel.find({ website_id: id }).exec();
+    const articles = await this.articleModel.find({ website_id: id }).allowDiskUse(true).exec();
     for (const article of articles) {
       await this.articleModel.findByIdAndDelete(article._id);
     }
@@ -178,7 +181,8 @@ export class WebsiteService {
     // 利用websiteId去article中查找website_id为websiteId的所有文章，并按发布时间倒序排列
     const articles = await this.articleModel
       .find({ website_id: id })
-      .sort({ publish_date: -1 });
+      .sort({ publish_date: -1 })
+      .allowDiskUse(true);
 
     // 计算所有文章的page_view总和
     const pageView = articles.reduce(
