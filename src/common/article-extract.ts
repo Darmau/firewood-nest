@@ -26,16 +26,16 @@ export default async function getArticleInfo(
         url,
         {
           wordsPerMinute: 300,
-          descriptionTruncateLen: 180,
-          descriptionLengthThreshold: 40,
-          contentLengthThreshold: 180,
+          descriptionTruncateLen: 210,
+          descriptionLengthThreshold: 120,
+          contentLengthThreshold: 200,
         },
         {
           headers: {
             "user-agent":
               "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36",
           },
-          signal: AbortSignal.timeout(10000),
+          signal: AbortSignal.timeout(15000),
         },
       );
 
