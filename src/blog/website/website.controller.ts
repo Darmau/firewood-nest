@@ -32,7 +32,7 @@ export class WebsiteController {
     return await this.websiteService.getWebsiteByPageView(page, limit);
   }
 
-  // /website/latest?page=1&limit=10
+  // /website/latest?page=1&limit=15
   @Get("latest")
   async getWebsiteByLastPublish(
     @Query("page", PositiveIntPipe) page: number = 1,
@@ -41,13 +41,22 @@ export class WebsiteController {
     return await this.websiteService.getWebsiteByLastPublish(page, limit);
   }
 
-  // /website/all?page=1&limit=10
+  // /website/all?page=1&limit=15
   @Get("all")
   async getAllWebsite(
       @Query("page", PositiveIntPipe) page: number = 1,
       @Query("limit", PositiveIntPipe) limit: number = 15
   ) {
     return await this.websiteService.getAllWebsite(page, limit);
+  }
+
+  // /website/error?page=1&limit=15
+  @Get("error")
+  async getWebsiteByErrorCount(
+      @Query("page", PositiveIntPipe) page: number = 1,
+      @Query("limit", PositiveIntPipe) limit: number = 15
+  ) {
+    return await this.websiteService.getWebsiteByErrorCount(page, limit);
   }
 
   // /website/count
