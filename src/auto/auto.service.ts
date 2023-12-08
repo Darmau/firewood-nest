@@ -77,9 +77,17 @@ export class AutoService {
         if (!res.ok) {
           article.crawl_error += 1;
           await article.save();
-          this.logger.warn(
-            `Failed to access ${article.url}, count: ${article.crawl_error}`,
-          );
+          // 如果错误次数大于3次，删除文章
+          if (article.crawl_error > 3) {
+            await this.articleModel.findByIdAndDelete(article._id);
+            this.logger.warn(
+              `Delete article ${article.title} in ${article.website}`,
+            );
+          } else {
+            this.logger.warn(
+                `Failed to access ${article.url}, count: ${article.crawl_error}`,
+            );
+          }
         }
       } catch (error) {
         article.crawl_error += 1;
