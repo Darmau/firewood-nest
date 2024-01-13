@@ -1,22 +1,24 @@
 import {
   Body,
   Controller,
-  Get,
-  Inject,
+  Get, Inject, Logger,
   Post,
   Put,
   Query,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 import {AuthGuard} from "@/auth/auth.guard";
 import {AddArticleDto} from "@/dto/addArticle.dto";
 import {ArticleService} from "@/blog/article/article.service";
 import {GetArticleCountDto} from "@/dto/getArticleCount.dto";
 import {PositiveIntPipe} from "@/pipe/positiveInt.pipe";
+import {CacheInterceptor} from "@nestjs/cache-manager";
 import {CACHE_MANAGER} from "@nestjs/cache-manager";
 import {Cache} from "cache-manager";
 
 @Controller("article")
+@UseInterceptors(CacheInterceptor)
 export class ArticleController {
   constructor(
       @Inject(CACHE_MANAGER) private cacheManager: Cache,
@@ -24,19 +26,15 @@ export class ArticleController {
   ) {
   }
 
+  private logger = new Logger('ArticleController');
+
   // /article/latest?page=1&limit=10
   @Get("latest")
   async getAllUnblockedArticle(
       @Query("page", PositiveIntPipe) page: number = 1,
       @Query("limit", PositiveIntPipe) limit: number = 15,
   ) {
-    const articlesFromCache = await this.cacheManager.get(`/article/latest?page=${page}&limit=${limit}`);
-    if (articlesFromCache) {
-      return articlesFromCache;
-    }
-    const articles = await this.articleService.getAllUnblockedArticle(page, limit);
-    await this.cacheManager.set(`/article/latest?page=${page}&limit=${limit}`, articles, 0);
-    return articles;
+    return await this.articleService.getAllUnblockedArticle(page, limit);
   }
 
   // /article/all?page=1&limit=10
@@ -54,13 +52,7 @@ export class ArticleController {
       @Query("page", PositiveIntPipe) page: number = 1,
       @Query("limit", PositiveIntPipe) limit: number = 15,
   ) {
-    const articlesFromCache = await this.cacheManager.get(`/article/featured?page=${page}&limit=${limit}`);
-    if (articlesFromCache) {
-      return articlesFromCache;
-    }
-    const articles = await this.articleService.getArticleByRecommend(page, limit);
-    await this.cacheManager.set(`/article/featured?page=${page}&limit=${limit}`, articles, 0);
-    return articles;
+    return await this.articleService.getArticleByRecommend(page, limit);
   }
 
   // 找出最新的指定分类的文章
@@ -71,13 +63,7 @@ export class ArticleController {
       @Query("page", PositiveIntPipe) page: number = 1,
       @Query("limit", PositiveIntPipe) limit: number = 15,
   ) {
-    const articlesFromCache = await this.cacheManager.get(`/article/topic?topic=${topic}&page=${page}&limit=${limit}`);
-    if (articlesFromCache) {
-      return articlesFromCache;
-    }
-    const articles = await this.articleService.getArticleByTopic(topic, page, limit);
-    await this.cacheManager.set(`/article/topic?topic=${topic}&page=${page}&limit=${limit}`, articles, 0);
-    return articles;
+    return await this.articleService.getArticleByTopic(topic, page, limit);
   }
 
   // /article/count
@@ -98,13 +84,7 @@ export class ArticleController {
       @Query("page", PositiveIntPipe) page: number = 1,
       @Query("limit", PositiveIntPipe) limit: number = 15,
   ) {
-    const articlesFromCache = await this.cacheManager.get(`/article?website=${url}&page=${page}&limit=${limit}`);
-    if (articlesFromCache) {
-      return articlesFromCache;
-    }
-    const articles = await this.articleService.getArticleByBlog(url, page, limit);
-    await this.cacheManager.set(`/article?website=${url}&page=${page}&limit=${limit}`, articles, 0);
-    return articles;
+    return await this.articleService.getArticleByBlog(url, page, limit);
   }
 
   @Get("article-count")
@@ -131,6 +111,8 @@ export class ArticleController {
   @UseGuards(AuthGuard)
   @Put("block")
   async blockArticle(@Query("id") id: string) {
+    await this.cacheManager.reset();
+    this.logger.debug('Cache reset');
     return await this.articleService.blockArticle(id);
   }
 
@@ -144,6 +126,8 @@ export class ArticleController {
   @UseGuards(AuthGuard)
   @Put("feature")
   async featureArticle(@Query("id") id: string) {
+    await this.cacheManager.reset();
+    this.logger.debug('Cache reset');
     return await this.articleService.setFeaturedArticle(id);
   }
 
@@ -161,13 +145,7 @@ export class ArticleController {
   // 获取一周范围内最热门的文章
   @Get("hottest")
   async getHotestArticle(@Query("limit", PositiveIntPipe) limit: number = 10) {
-    const articlesFromCache = await this.cacheManager.get(`/article/hottest?limit=${limit}`);
-    if (articlesFromCache) {
-      return articlesFromCache;
-    }
-    const articles = await this.articleService.getHotestArticle(limit);
-    await this.cacheManager.set(`/article/hottest?limit=${limit}`, articles, 0);
-    return articles;
+    return await this.articleService.getHotestArticle(limit);
   }
 
   // /article/random
