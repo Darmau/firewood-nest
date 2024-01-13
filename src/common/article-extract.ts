@@ -26,7 +26,7 @@ export default async function getArticleInfo(
           "Content-Type": "application/json",
           "Authorization": `Bearer ${process.env.SUPABASE_ANON_KEY}`
         },
-      });
+      }).then((res) => res.json()) ;
 
       if (article.content) {
         const $ = cheerio.load(article.content);

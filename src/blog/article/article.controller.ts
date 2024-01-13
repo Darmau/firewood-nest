@@ -159,4 +159,14 @@ export class ArticleController {
   async getManyRandomArticle() {
     return await this.articleService.getManyRandomArticle();
   }
+
+  // 测试方法 /article/test
+  @Post("test")
+  async testArticle(@Body() any) {
+    return await this.articleService.testArticle(
+        any.url,
+        any.website,
+        any.description,
+    );
+  }
 }

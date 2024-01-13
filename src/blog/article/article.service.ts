@@ -144,13 +144,13 @@ export class ArticleService {
       const article = await getArticleInfo(url, website, description);
       this.logger.debug(`Start save article ${title}, publish at ${publish_date}`);
       const newArticle = new this.articleModel({
+        url: url,
         website_id: website_id,
         website: website,
-        author: author,
-        url: url,
         title: title,
         description: description,
         publish_date: publish_date,
+        author: author,
         cover: article.cover,
         content: article.content,
         abstract: article.abstract,
@@ -168,6 +168,11 @@ export class ArticleService {
     return {
       status: "OK",
     };
+  }
+
+  // 测试方法，接收URL，直接返回提取过后的文章信息
+  async testArticle(url: string, website: string, description: string) {
+    return await getArticleInfo(url, website, description);
   }
 
   // 根据网站rss，获取网站最新文章，并传入addArticle方法
