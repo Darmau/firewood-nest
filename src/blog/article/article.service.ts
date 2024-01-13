@@ -170,11 +170,6 @@ export class ArticleService {
     };
   }
 
-  // 测试方法，接收URL，直接返回提取过后的文章信息
-  async testArticle(url: string, website: string, description: string) {
-    return await getArticleInfo(url, website, description);
-  }
-
   // 根据网站rss，获取网站最新文章，并传入addArticle方法
   async updateArticlesByWebsite(url: string): Promise<any> {
     const website = await this.websiteModel.findOne({ url: url }).exec();
