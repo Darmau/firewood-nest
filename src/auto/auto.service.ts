@@ -81,7 +81,7 @@ export class AutoService {
           if (article.crawl_error > 3) {
             await this.articleModel.findByIdAndDelete(article._id);
             this.logger.warn(
-              `Delete article ${article.title} in ${article.website}`,
+              `Delete article ${article.title} in ${article.url}`,
             );
           } else {
             this.logger.warn(
