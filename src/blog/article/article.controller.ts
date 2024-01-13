@@ -2,7 +2,7 @@ import {
   Body,
   Controller,
   Get,
-  Inject, Logger,
+  Inject,
   Post,
   Put,
   Query,
@@ -24,8 +24,6 @@ export class ArticleController {
   ) {
   }
 
-  private logger = new Logger("ArticleController");
-
   // /article/latest?page=1&limit=10
   @Get("latest")
   async getAllUnblockedArticle(
@@ -34,7 +32,6 @@ export class ArticleController {
   ) {
     const articlesFromCache = await this.cacheManager.get(`/article/latest?page=${page}&limit=${limit}`);
     if (articlesFromCache) {
-      this.logger.debug(`Cache hit: /article/latest?page=${page}&limit=${limit}`);
       return articlesFromCache;
     }
     const articles = await this.articleService.getAllUnblockedArticle(page, limit);
@@ -59,7 +56,6 @@ export class ArticleController {
   ) {
     const articlesFromCache = await this.cacheManager.get(`/article/featured?page=${page}&limit=${limit}`);
     if (articlesFromCache) {
-      this.logger.debug(`Cache hit: /article/featured?page=${page}&limit=${limit}`);
       return articlesFromCache;
     }
     const articles = await this.articleService.getArticleByRecommend(page, limit);
@@ -77,7 +73,6 @@ export class ArticleController {
   ) {
     const articlesFromCache = await this.cacheManager.get(`/article/topic?topic=${topic}&page=${page}&limit=${limit}`);
     if (articlesFromCache) {
-      this.logger.debug(`Cache hit: /article/topic?topic=${topic}&page=${page}&limit=${limit}`);
       return articlesFromCache;
     }
     const articles = await this.articleService.getArticleByTopic(topic, page, limit);
@@ -105,7 +100,6 @@ export class ArticleController {
   ) {
     const articlesFromCache = await this.cacheManager.get(`/article?website=${url}&page=${page}&limit=${limit}`);
     if (articlesFromCache) {
-      this.logger.debug(`Cache hit: /article?website=${url}&page=${page}&limit=${limit}`);
       return articlesFromCache;
     }
     const articles = await this.articleService.getArticleByBlog(url, page, limit);
@@ -169,7 +163,6 @@ export class ArticleController {
   async getHotestArticle(@Query("limit", PositiveIntPipe) limit: number = 10) {
     const articlesFromCache = await this.cacheManager.get(`/article/hottest?limit=${limit}`);
     if (articlesFromCache) {
-      this.logger.debug(`Cache hit: /article/hottest?limit=${limit}`);
       return articlesFromCache;
     }
     const articles = await this.articleService.getHotestArticle(limit);

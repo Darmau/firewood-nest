@@ -3,7 +3,7 @@ import {
   Controller,
   Delete,
   Get,
-  Inject, Logger,
+  Inject,
   Post,
   Put,
   Query,
@@ -28,8 +28,6 @@ export class WebsiteController {
   ) {
   }
 
-  private logger = new Logger("WebsiteController");
-
   // /website/most-view?page=1&limit=10
   @Get("most-view")
   async getWebsiteByPageView(
@@ -38,7 +36,6 @@ export class WebsiteController {
   ) {
     const websitesFromCache = await this.cacheManager.get(`/website/most-view?page=${page}&limit=${limit}`);
     if (websitesFromCache) {
-      this.logger.debug(`Cache hit: /website/most-view?page=${page}&limit=${limit}`);
       return websitesFromCache;
     }
     const websites = await this.websiteService.getWebsiteByPageView(page, limit);
@@ -54,7 +51,6 @@ export class WebsiteController {
   ) {
     const websitesFromCache = await this.cacheManager.get(`/website/latest?page=${page}&limit=${limit}`);
     if (websitesFromCache) {
-      this.logger.debug(`Cache hit: /website/latest?page=${page}&limit=${limit}`);
       return websitesFromCache;
     }
     const websites = await this.websiteService.getWebsiteByLastPublish(page, limit);
@@ -91,7 +87,6 @@ export class WebsiteController {
   async getWebsiteById(@Query("id") id: string) {
     const websiteFromCache = await this.cacheManager.get(`/website?id=${id}`);
     if (websiteFromCache) {
-      this.logger.debug(`Cache hit: /website?id=${id}`);
       return websiteFromCache;
     }
     const website = await this.websiteService.getWebsiteById(id);
@@ -111,7 +106,6 @@ export class WebsiteController {
     // 获取网站信息
     const websiteFromCache = await this.cacheManager.get(`/website/blog?url=${httpsUrl}`);
     if (websiteFromCache) {
-      this.logger.debug(`Cache hit: /website/blog?url=${httpsUrl}`);
       return websiteFromCache;
     }
     const website = await this.websiteService.getWebsiteByUrl(httpsUrl);
@@ -121,7 +115,6 @@ export class WebsiteController {
     } else {
       const websiteFromCache = await this.cacheManager.get(`/website/blog?url=${httpUrl}`);
       if (websiteFromCache) {
-        this.logger.debug(`Cache hit: /website/blog?url=${httpUrl}`);
         return websiteFromCache;
       }
       const website = await this.websiteService.getWebsiteByUrl(httpUrl);
@@ -173,7 +166,6 @@ export class WebsiteController {
   async getLastYearArticleCount(@Query("id") id: string) {
     const websiteFromCache = await this.cacheManager.get(`/website/last-year?id=${id}`);
     if (websiteFromCache) {
-      this.logger.debug(`Cache hit: /website/last-year?id=${id}`);
       return websiteFromCache;
     }
     const website = await this.websiteService.getLastYearArticleCount(id);
