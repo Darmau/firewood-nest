@@ -19,6 +19,7 @@ import {PositiveIntPipe} from "@/pipe/positiveInt.pipe";
 import {CacheInterceptor} from "@nestjs/cache-manager";
 import {CACHE_MANAGER} from "@nestjs/cache-manager";
 import {Cache} from "cache-manager";
+import {CacheTTL} from "@nestjs/common/cache";
 
 @Controller("website")
 @UseInterceptors(CacheInterceptor)
@@ -52,6 +53,7 @@ export class WebsiteController {
 
   // /website/all?page=1&limit=15
   @Get("all")
+  @CacheTTL(15)
   async getAllWebsite(
       @Query("page", PositiveIntPipe) page: number = 1,
       @Query("limit", PositiveIntPipe) limit: number = 15
@@ -61,6 +63,7 @@ export class WebsiteController {
 
   // /website/error?page=1&limit=15
   @Get("error")
+  @CacheTTL(15)
   async getWebsiteByErrorCount(
       @Query("page", PositiveIntPipe) page: number = 1,
       @Query("limit", PositiveIntPipe) limit: number = 15

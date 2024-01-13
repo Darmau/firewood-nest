@@ -16,6 +16,7 @@ import {PositiveIntPipe} from "@/pipe/positiveInt.pipe";
 import {CacheInterceptor} from "@nestjs/cache-manager";
 import {CACHE_MANAGER} from "@nestjs/cache-manager";
 import {Cache} from "cache-manager";
+import {CacheTTL} from "@nestjs/common/cache";
 
 @Controller("article")
 @UseInterceptors(CacheInterceptor)
@@ -39,6 +40,7 @@ export class ArticleController {
 
   // /article/all?page=1&limit=10
   @Get("all")
+  @CacheTTL(15)
   async getAllArticle(
       @Query("page", PositiveIntPipe) page: number = 1,
       @Query("limit", PositiveIntPipe) limit: number = 15,
@@ -150,12 +152,14 @@ export class ArticleController {
 
   // /article/random
   @Get("random")
+  @CacheTTL(3)
   async getRandomArticle() {
     return await this.articleService.getRandomArticle();
   }
 
   // /article/random-many
   @Get("random-many")
+  @CacheTTL(60)
   async getManyRandomArticle() {
     return await this.articleService.getManyRandomArticle();
   }
