@@ -19,7 +19,7 @@ export default async function getArticleInfo(
   const logger = new Logger();
   logger.debug(`Start extract article from ${url}`);
 
-  while (retries < 3) {
+  while (!article && retries < 3) {
     try {
       article = await fetch(`${process.env.SUPABASE_EDGE_FUNCTION}/article?url=${url}`, {
         headers: {
