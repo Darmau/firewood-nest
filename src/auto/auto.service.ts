@@ -1,12 +1,14 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Cron } from "@nestjs/schedule";
-import { Model } from "mongoose";
-import { ArticleService } from "@/blog/article/article.service";
-import { WebsiteService } from "@/blog/website/website.service";
-import { Article } from "@/schemas/article.schema";
-import { Statistic } from "@/schemas/statistic.schema";
-import { Website } from "@/schemas/website.schema";
+import {Inject, Injectable, Logger} from "@nestjs/common";
+import {InjectModel} from "@nestjs/mongoose";
+import {Cron} from "@nestjs/schedule";
+import {Model} from "mongoose";
+import {ArticleService} from "@/blog/article/article.service";
+import {WebsiteService} from "@/blog/website/website.service";
+import {Article} from "@/schemas/article.schema";
+import {Statistic} from "@/schemas/statistic.schema";
+import {Website} from "@/schemas/website.schema";
+import {CACHE_MANAGER} from "@nestjs/cache-manager";
+import {Cache} from "cache-manager";
 
 @Injectable()
 export class AutoService {
@@ -14,6 +16,7 @@ export class AutoService {
     @InjectModel("Website") private websiteModel: Model<Website>,
     @InjectModel("Article") private articleModel: Model<Article>,
     @InjectModel("Statistic") private statisticModel: Model<Statistic>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private articleService: ArticleService,
     private websiteService: WebsiteService,
   ) {}
@@ -42,13 +45,14 @@ export class AutoService {
           continue;
         }
       }
+      await this.cacheManager.reset();
       return this.logger.log("Auto update articles success");
     } catch (error) {
       this.logger.error("Auto update articles failed:" + error.message);
     }
   }
 
-  // 一个月进行一次的任务。遍历所有article，一次1000篇。检测是否可访问，不可访问的进行标记。
+  // 一个月进行一次的任务。遍历所有article，一次1000篇。检测是否可访问，不可访问的会删除。
   @Cron("0 0 19 * * *")
   async checkArticles() {
     // 获取当前日期
@@ -98,6 +102,8 @@ export class AutoService {
         continue;
       }
     }
+    await this.cacheManager.reset();
+    return this.logger.log("Check articles success");
   }
 
   // 每天凌晨1点执行一次，计算网站和文章的数量，写入数据库
@@ -117,6 +123,7 @@ export class AutoService {
       inaccessible_article: inaccessibleArticlesCount,
     });
     await todayStatistic.save();
+    await this.cacheManager.reset();
     return this.logger.log("Update statistics success");
   }
 }
