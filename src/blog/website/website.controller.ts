@@ -2,32 +2,41 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
+  Get, Inject, Logger,
   Post,
   Put,
   Query,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
-import { WebsiteService } from "@/blog/website/website.service";
-import { AddWebsiteDto } from "@/dto/addWebsite.dto";
-import { UpdateWebsiteDto } from "@/dto/updateWebsite.dto";
-import { AuthGuard } from "@/auth/auth.guard";
-import { ArticleService } from "@/blog/article/article.service";
-import { Website } from "@/schemas/website.schema";
-import { PositiveIntPipe } from "@/pipe/positiveInt.pipe";
+import {WebsiteService} from "@/blog/website/website.service";
+import {AddWebsiteDto} from "@/dto/addWebsite.dto";
+import {UpdateWebsiteDto} from "@/dto/updateWebsite.dto";
+import {AuthGuard} from "@/auth/auth.guard";
+import {ArticleService} from "@/blog/article/article.service";
+import {Website} from "@/schemas/website.schema";
+import {PositiveIntPipe} from "@/pipe/positiveInt.pipe";
+import {CacheInterceptor} from "@nestjs/cache-manager";
+import {CACHE_MANAGER} from "@nestjs/cache-manager";
+import {Cache} from "cache-manager";
 
 @Controller("website")
+@UseInterceptors(CacheInterceptor)
 export class WebsiteController {
   constructor(
-    private websiteService: WebsiteService,
-    private articleService: ArticleService,
-  ) {}
+      @Inject(CACHE_MANAGER) private cacheManager: Cache,
+      private websiteService: WebsiteService,
+      private articleService: ArticleService,
+  ) {
+  }
+
+  private logger = new Logger('WebsiteController');
 
   // /website/most-view?page=1&limit=10
   @Get("most-view")
   async getWebsiteByPageView(
-    @Query("page", PositiveIntPipe) page: number = 1,
-    @Query("limit", PositiveIntPipe) limit: number = 15,
+      @Query("page", PositiveIntPipe) page: number = 1,
+      @Query("limit", PositiveIntPipe) limit: number = 15,
   ) {
     return await this.websiteService.getWebsiteByPageView(page, limit);
   }
@@ -35,8 +44,8 @@ export class WebsiteController {
   // /website/latest?page=1&limit=15
   @Get("latest")
   async getWebsiteByLastPublish(
-    @Query("page", PositiveIntPipe) page: number = 1,
-    @Query("limit", PositiveIntPipe) limit: number = 15,
+      @Query("page", PositiveIntPipe) page: number = 1,
+      @Query("limit", PositiveIntPipe) limit: number = 15,
   ) {
     return await this.websiteService.getWebsiteByLastPublish(page, limit);
   }
@@ -94,9 +103,11 @@ export class WebsiteController {
   @UseGuards(AuthGuard)
   @Post("add")
   async addWebsite(@Body() addWebsiteDto: AddWebsiteDto) {
+    await this.cacheManager.reset();
+    this.logger.debug('Cache reset');
     return await this.websiteService.addWebsite(
-      addWebsiteDto.url,
-      addWebsiteDto.name,
+        addWebsiteDto.url,
+        addWebsiteDto.name,
     );
   }
 
@@ -105,16 +116,18 @@ export class WebsiteController {
   @UseGuards(AuthGuard)
   @Put()
   async updateWebsiteUrl(
-    @Query("id") id: string,
-    @Body() updateWebsiteDto: UpdateWebsiteDto,
+      @Query("id") id: string,
+      @Body() updateWebsiteDto: UpdateWebsiteDto,
   ) {
+    await this.cacheManager.reset();
+    this.logger.debug('Cache reset');
     return await this.websiteService.updateWebsite(
-      id,
-      updateWebsiteDto.url,
-      updateWebsiteDto.rss,
-      updateWebsiteDto.name,
-      updateWebsiteDto.description,
-      updateWebsiteDto.cover,
+        id,
+        updateWebsiteDto.url,
+        updateWebsiteDto.rss,
+        updateWebsiteDto.name,
+        updateWebsiteDto.description,
+        updateWebsiteDto.cover,
     );
   }
 
@@ -123,6 +136,8 @@ export class WebsiteController {
   @UseGuards(AuthGuard)
   @Delete()
   async deleteWebsite(@Query("id") id: string) {
+    await this.cacheManager.reset();
+    this.logger.debug('Cache reset');
     return await this.websiteService.deleteWebsite(id);
   }
 
@@ -142,6 +157,8 @@ export class WebsiteController {
   // 手动更新开始抓取网站
   @Post("update")
   async updateWebsite(@Query("url") url: string) {
+    await this.cacheManager.reset();
+    this.logger.debug('Cache reset');
     return await this.articleService.updateArticlesByWebsite(url);
   }
 }

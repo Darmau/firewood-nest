@@ -1,4 +1,3 @@
-import { extract } from "@extractus/feed-extractor";
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model } from "mongoose";
@@ -73,8 +72,7 @@ export class ArticleService {
         { $sample: { size: 1 } },
       ])
       .exec();
-  }
-  Ò;
+  };
 
   async getManyRandomArticle(): Promise<Article[]> {
     // 最近3天的文章
@@ -146,13 +144,13 @@ export class ArticleService {
       const article = await getArticleInfo(url, website, description);
       this.logger.debug(`Start save article ${title}, publish at ${publish_date}`);
       const newArticle = new this.articleModel({
+        url: url,
         website_id: website_id,
         website: website,
-        author: author,
-        url: url,
         title: title,
         description: description,
         publish_date: publish_date,
+        author: author,
         cover: article.cover,
         content: article.content,
         abstract: article.abstract,
@@ -209,7 +207,6 @@ export class ArticleService {
         this.logger.error(
           `Add article ${item.title} of url ${item.link} failed`,
         );
-        continue;
       }
     }
 
@@ -219,7 +216,7 @@ export class ArticleService {
       { url: url },
       { article_count: articleCount },
     );
-    return await this.websiteModel.findById(websiteId);
+    return this.websiteModel.findById(websiteId);
   }
 
   //切换某篇文章isFeatured的状态
@@ -238,7 +235,7 @@ export class ArticleService {
 
   //删除某篇文章
   async deleteArticle(id: string): Promise<Article> {
-    return await this.articleModel.findByIdAndDelete(id);
+    return this.articleModel.findByIdAndDelete(id);
   }
 
   // 根据文章website字段，统计指定网站的文章数量

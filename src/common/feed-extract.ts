@@ -1,10 +1,16 @@
-import { extract } from "@extractus/feed-extractor";
-
 export default async function feedExtract(feedUrl: string) {
-  let feed = await extract(feedUrl);
-  // 如果日期不存在，需要重新提取
-  if (!feed.entries[0].published) {
-    feed = await extract(feedUrl, { useISODateFormat: false });
+  try {
+    // 请求https://vbwbtqsflwkgwxobfkhs.supabase.co/functions/v1/rss?url=
+    let feed = await fetch(`${process.env.SUPABASE_EDGE_FUNCTION}/rss?url=${feedUrl}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.SUPABASE_ANON_KEY}`
+      },
+    })
+    .then((res) => res.json());
+    return feed.entries.slice(0, 30);
+  } catch (error) {
+    this.logger.error(`Error happen on extract ${feedUrl}: ${error}`);
+    throw new Error(`Error happen on extract ${feedUrl}: ${error}`)
   }
-  return feed.entries.slice(0, 30);
 }

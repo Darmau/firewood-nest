@@ -1,4 +1,3 @@
-import { extract } from "@extractus/article-extractor";
 import * as cheerio from "cheerio";
 import cloudflareImage from "./cloudflare-image";
 import AIProcess from "./open-ai";
@@ -22,22 +21,12 @@ export default async function getArticleInfo(
 
   while (!article && retries < 3) {
     try {
-      article = await extract(
-        url,
-        {
-          wordsPerMinute: 300,
-          descriptionTruncateLen: 210,
-          descriptionLengthThreshold: 120,
-          contentLengthThreshold: 200,
+      article = await fetch(`${process.env.SUPABASE_EDGE_FUNCTION}/article?url=${url}`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.SUPABASE_ANON_KEY}`
         },
-        {
-          headers: {
-            "user-agent":
-              "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36",
-          },
-          signal: AbortSignal.timeout(15000),
-        },
-      );
+      }).then((res) => res.json()) ;
 
       if (article.content) {
         const $ = cheerio.load(article.content);
