@@ -46,6 +46,7 @@ export class AutoService {
         }
       }
       await this.cacheManager.reset();
+      this.logger.log("Reset cache");
       return this.logger.log("Auto update articles success");
     } catch (error) {
       this.logger.error("Auto update articles failed:" + error.message);

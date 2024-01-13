@@ -19,7 +19,6 @@ import {APP_INTERCEPTOR} from "@nestjs/core";
     }),
     CacheModule.register({
       isGlobal: true,
-      ttl: 3600,
     }),
     MongooseModule.forRoot(process.env.MONGODB),
     AuthModule,
@@ -29,13 +28,7 @@ import {APP_INTERCEPTOR} from "@nestjs/core";
     AutoModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: CacheInterceptor,
-    }
-  ],
+  providers: [AppService],
 })
 export class AppModule {
 }
