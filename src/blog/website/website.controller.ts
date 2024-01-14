@@ -153,6 +153,7 @@ export class WebsiteController {
 
   // 随机返回6个网站
   @Get("random")
+  @CacheTTL(1)
   async getRandomWebsite(): Promise<Website[]> {
     return await this.websiteService.getRandomWebsite();
   }

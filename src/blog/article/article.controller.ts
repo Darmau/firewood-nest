@@ -152,14 +152,14 @@ export class ArticleController {
 
   // /article/random
   @Get("random")
-  @CacheTTL(3)
+  @CacheTTL(2)
   async getRandomArticle() {
     return await this.articleService.getRandomArticle();
   }
 
   // /article/random-many
   @Get("random-many")
-  @CacheTTL(60)
+  @CacheTTL(900)
   async getManyRandomArticle() {
     return await this.articleService.getManyRandomArticle();
   }
