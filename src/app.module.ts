@@ -19,7 +19,7 @@ import {APP_INTERCEPTOR} from "@nestjs/core";
     }),
     CacheModule.register({
       isGlobal: true,
-      ttl: 3600
+      ttl: 14400
     }),
     MongooseModule.forRoot(process.env.MONGODB),
     AuthModule,

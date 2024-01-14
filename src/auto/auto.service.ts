@@ -30,6 +30,10 @@ export class AutoService {
       const websites = await this.websiteModel.find().allowDiskUse(true);
       this.logger.log("Start update " + websites.length + " websites");
 
+      // 重置缓存
+      await this.cacheManager.reset();
+      this.logger.log("Reset cache");
+
       for (const website of websites) {
         try {
           await this.articleService.updateArticlesByWebsite(website.url);
@@ -45,8 +49,6 @@ export class AutoService {
           continue;
         }
       }
-      await this.cacheManager.reset();
-      this.logger.log("Reset cache");
       return this.logger.log("Auto update articles success");
     } catch (error) {
       this.logger.error("Auto update articles failed:" + error.message);
