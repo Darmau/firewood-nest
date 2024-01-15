@@ -21,11 +21,13 @@ export default async function getArticleInfo(
 
   while (!article && retries < 3) {
     try {
-      article = await fetch(`${process.env.SUPABASE_EDGE_FUNCTION}/article?url=${url}`, {
+      article = await fetch(`${process.env.SUPABASE_EDGE_FUNCTION}/article`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${process.env.SUPABASE_ANON_KEY}`
         },
+        body: JSON.stringify({url: url}),
       }).then((res) => res.json()) ;
 
       if (article.content) {
