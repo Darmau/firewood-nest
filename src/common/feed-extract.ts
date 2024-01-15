@@ -9,7 +9,7 @@ export default async function feedExtract(feedUrl: string) {
       },
       body: JSON.stringify({url: feedUrl}),
     }).then((res) => res.json());
-    return feed;
+    return feed.entries.slice(0, 30);
   } catch (error) {
     throw new Error(`Error happen on extract ${feedUrl}: ${error}`);
   }
