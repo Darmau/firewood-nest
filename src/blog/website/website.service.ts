@@ -254,4 +254,14 @@ export class WebsiteService {
   async getRandomWebsite(): Promise<Website[]> {
     return await this.websiteModel.aggregate([{$sample: {size: 6}}]).exec();
   }
+
+  // 检测网站是否可访问
+  async checkWebsite(url: string): Promise<boolean> {
+    try {
+      const response = await fetch(url);
+      return response.ok;
+    } catch (err) {
+      return false;
+    }
+  }
 }

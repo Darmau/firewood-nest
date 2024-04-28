@@ -165,4 +165,10 @@ export class WebsiteController {
     this.logger.debug('Cache reset');
     return await this.articleService.updateArticlesByWebsite(url);
   }
+
+  // 检测网站是否可访问 /website/check?url=
+  @Get("check")
+  async checkWebsite(@Query("url") url: string) {
+    return await this.websiteService.checkWebsite(url);
+  }
 }
