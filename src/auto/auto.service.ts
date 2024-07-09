@@ -46,7 +46,6 @@ export class AutoService {
             { url: website.url },
             { crawl_error: website.crawl_error + 1 },
           );
-          continue;
         }
       }
       return this.logger.log("Auto update articles success");
@@ -71,7 +70,8 @@ export class AutoService {
       .sort({ publish_date: 1 })
       .limit(1000)
       .skip(offset)
-      .allowDiskUse(true);
+    .allowDiskUse(true)
+    .exec();
 
     this.logger.log(`Start check articles from ${offset} to ${offset + 1000}`);
 
@@ -102,7 +102,6 @@ export class AutoService {
         this.logger.error(
           `Failed to access ${article.url}, count: ${article.crawl_error}`,
         );
-        continue;
       }
     }
     await this.cacheManager.reset();
@@ -117,7 +116,7 @@ export class AutoService {
     const articlesCount = await this.articleModel.estimatedDocumentCount();
     const inaccessibleArticlesCount = await this.articleModel.countDocuments({
       crawl_error: { $gte: 1 },
-    });
+    }).allowDiskUse(true);
 
     const todayStatistic = new this.statisticModel({
       date: date,

@@ -197,7 +197,8 @@ export class WebsiteService {
     const articles = await this.articleModel
     .find({website_id: id})
     .sort({publish_date: -1})
-    .allowDiskUse(true);
+    .allowDiskUse(true)
+    .exec();
 
     // 计算所有文章的page_view总和
     const pageView = articles.reduce(
@@ -243,11 +244,10 @@ export class WebsiteService {
     }
     const oneYearAgo = new Date();
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-    const count = await this.articleModel.countDocuments({
+    return await this.articleModel.countDocuments({
       website_id: id,
       publish_date: {$gte: oneYearAgo},
     });
-    return count;
   }
 
   // 随机抽取6个网站
