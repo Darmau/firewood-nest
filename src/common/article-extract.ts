@@ -31,10 +31,7 @@ export default async function getArticleInfo(
       }).then((res) => res.json()) ;
 
       if (article.content) {
-        const $ = cheerio.load(article.content);
-        const contentString = $.text();
-
-        const articleData = await AIProcess(contentString || description);
+        const articleData = await AIProcess(article.content || description);
 
         if (articleData) {
           const articleJson = JSON.parse(articleData);
