@@ -12,42 +12,54 @@ import {Cache} from "cache-manager";
 
 @Injectable()
 export class AutoService {
-  constructor(
-    @InjectModel("Website") private websiteModel: Model<Website>,
-    @InjectModel("Article") private articleModel: Model<Article>,
-    @InjectModel("Statistic") private statisticModel: Model<Statistic>,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    private articleService: ArticleService,
-    private websiteService: WebsiteService,
-  ) {}
-
   private readonly logger = new Logger(AutoService.name);
+
+  constructor(
+      @InjectModel("Website") private websiteModel: Model<Website>,
+      @InjectModel("Article") private articleModel: Model<Article>,
+      @InjectModel("Statistic") private statisticModel: Model<Statistic>,
+      @Inject(CACHE_MANAGER) private cacheManager: Cache,
+      private articleService: ArticleService,
+      private websiteService: WebsiteService,
+  ) {
+  }
 
   // 获取所有website，分别将url传入updateArticlesByWebsite方法, 每4小时执行一次
   @Cron("0 0 0-16/4 * * *")
   async updateArticle() {
     try {
-      const websites = await this.websiteModel.find().allowDiskUse(true);
-      this.logger.log("Start update " + websites.length + " websites");
+      const pageSize = 10;
+      let page = 1;
+      let websites;
 
-      // 重置缓存
-      await this.cacheManager.reset();
-      this.logger.log("Reset cache");
+      do {
+        websites = await this.websiteModel.find({}, {url: 1, _id: 1})
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
+        .lean()
+        .allowDiskUse(true);
+        this.logger.log("Start update " + websites.length + " websites");
 
-      for (const website of websites) {
-        try {
-          await this.articleService.updateArticlesByWebsite(website.url);
-          await this.websiteService.updatePageView(website._id.toString());
-        } catch (error) {
-          this.logger.error(
-            "Update websites failed at:" + website.url + "\n" + error.message,
-          );
-          await this.websiteModel.findOneAndUpdate(
-            { url: website.url },
-            { crawl_error: website.crawl_error + 1 },
-          );
+        // 重置缓存
+        await this.cacheManager.reset();
+        this.logger.log("Reset cache");
+
+        for (const website of websites) {
+          try {
+            await this.articleService.updateArticlesByWebsite(website.url);
+            await this.websiteService.updatePageView(website._id.toString());
+          } catch (error) {
+            this.logger.error(
+                "Update websites failed at:" + website.url + "\n" + error.message,
+            );
+            await this.websiteModel.findOneAndUpdate(
+                {url: website.url},
+                {crawl_error: website.crawl_error + 1},
+            );
+          }
         }
-      }
+        page++;
+      } while (websites.length === pageSize);
       return this.logger.log("Auto update articles success");
     } catch (error) {
       this.logger.error("Auto update articles failed:" + error.message);
@@ -66,10 +78,10 @@ export class AutoService {
 
     // 按publish_date从旧到新排序，设置每次查询的数量为1000，并根据偏移量查询
     const articles = await this.articleModel
-      .find()
-      .sort({ publish_date: 1 })
-      .limit(1000)
-      .skip(offset)
+    .find()
+    .sort({publish_date: 1})
+    .limit(1000)
+    .skip(offset)
     .allowDiskUse(true)
     .exec();
 
@@ -88,7 +100,7 @@ export class AutoService {
           if (article.crawl_error > 3) {
             await this.articleModel.findByIdAndDelete(article._id);
             this.logger.warn(
-              `Delete article ${article.title} in ${article.url}`,
+                `Delete article ${article.title} in ${article.url}`,
             );
           } else {
             this.logger.warn(
@@ -100,7 +112,7 @@ export class AutoService {
         article.crawl_error += 1;
         await article.save();
         this.logger.error(
-          `Failed to access ${article.url}, count: ${article.crawl_error}`,
+            `Failed to access ${article.url}, count: ${article.crawl_error}`,
         );
       }
     }
@@ -115,7 +127,7 @@ export class AutoService {
     const websitesCount = await this.websiteModel.estimatedDocumentCount();
     const articlesCount = await this.articleModel.estimatedDocumentCount();
     const inaccessibleArticlesCount = await this.articleModel.countDocuments({
-      crawl_error: { $gte: 1 },
+      crawl_error: {$gte: 1},
     }).allowDiskUse(true);
 
     const todayStatistic = new this.statisticModel({
