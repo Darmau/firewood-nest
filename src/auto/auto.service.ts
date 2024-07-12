@@ -27,43 +27,28 @@ export class AutoService {
   // 获取所有website，分别将url传入updateArticlesByWebsite方法, 每4小时执行一次
   @Cron("0 0 0-16/4 * * *")
   async updateArticle() {
-    try {
-      const pageSize = 10;
-      let page = 1;
-      let websites;
+    const websites = await this.websiteModel.find().allowDiskUse(true);
+    this.logger.log("Start update " + websites.length + " websites");
 
-      do {
-        websites = await this.websiteModel.find({}, {url: 1, _id: 1})
-        .skip((page - 1) * pageSize)
-        .limit(pageSize)
-        .lean()
-        .allowDiskUse(true);
-        this.logger.log("Start update " + websites.length + " websites");
+    // 重置缓存
+    await this.cacheManager.reset();
+    this.logger.log("Reset cache");
 
-        // 重置缓存
-        await this.cacheManager.reset();
-        this.logger.log("Reset cache");
-
-        for (const website of websites) {
-          try {
-            await this.articleService.updateArticlesByWebsite(website.url);
-            await this.websiteService.updatePageView(website._id.toString());
-          } catch (error) {
-            this.logger.error(
-                "Update websites failed at:" + website.url + "\n" + error.message,
-            );
-            await this.websiteModel.findOneAndUpdate(
-                {url: website.url},
-                {crawl_error: website.crawl_error + 1},
-            );
-          }
-        }
-        page++;
-      } while (websites.length === pageSize);
-      return this.logger.log("Auto update articles success");
-    } catch (error) {
-      this.logger.error("Auto update articles failed:" + error.message);
+    for (const website of websites) {
+      try {
+        await this.articleService.updateArticlesByWebsite(website.url);
+        await this.websiteService.updatePageView(website._id.toString());
+      } catch (error) {
+        this.logger.error(
+            "Update websites failed at:" + website.url + "\n" + error.message,
+        );
+        await this.websiteModel.findOneAndUpdate(
+            {url: website.url},
+            {crawl_error: website.crawl_error + 1},
+        );
+      }
     }
+    return this.logger.log("Auto update articles success");
   }
 
   // 一个月进行一次的任务。遍历所有article，一次1000篇。检测是否可访问，不可访问的会删除。
@@ -128,7 +113,7 @@ export class AutoService {
     const articlesCount = await this.articleModel.estimatedDocumentCount();
     const inaccessibleArticlesCount = await this.articleModel.countDocuments({
       crawl_error: {$gte: 1},
-    }).allowDiskUse(true);
+    }).exec();
 
     const todayStatistic = new this.statisticModel({
       date: date,

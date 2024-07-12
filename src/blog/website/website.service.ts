@@ -244,7 +244,7 @@ export class WebsiteService {
     }
     const oneYearAgo = new Date();
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-    return await this.articleModel.countDocuments({
+    return this.articleModel.countDocuments({
       website_id: id,
       publish_date: {$gte: oneYearAgo},
     });
@@ -252,7 +252,7 @@ export class WebsiteService {
 
   // 随机抽取6个网站
   async getRandomWebsite(): Promise<Website[]> {
-    return await this.websiteModel.aggregate([{$sample: {size: 6}}]).exec();
+    return await this.websiteModel.aggregate([{$sample: {size: 6}}]).allowDiskUse(true).exec();
   }
 
   // 检测网站是否可访问

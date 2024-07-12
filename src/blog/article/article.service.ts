@@ -71,6 +71,7 @@ export class ArticleService {
         { $match: { isBlocked: { $ne: true }, abstract: { $ne: null } } },
         { $sample: { size: 1 } },
       ])
+    .allowDiskUse(true)
       .exec();
   };
 
@@ -89,6 +90,7 @@ export class ArticleService {
         },
         { $sample: { size: 20 } },
       ])
+    .allowDiskUse(true)
       .exec();
   }
 
