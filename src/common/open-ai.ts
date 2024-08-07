@@ -20,7 +20,7 @@ export default async function AIProcess(content: string) {
     user: content,
   }
   try {
-    const articleResponse = await fetch(`${API}/claude`, {
+    const articleResponse = await fetch(`${API}/open-ai`, {
       method: "POST",
       headers: {
         "Content-Type": "text/plain",
